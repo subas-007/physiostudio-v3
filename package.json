@@ -1,0 +1,36 @@
+{
+  "name": "physiostudio",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Physio Studio – clinic website, patient portal, appointments, invoicing, CMS and reminders",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node src/seed.js",
+    "create-admin": "node scripts/create-admin.js",
+    "test": "node --test --test-force-exit test/*.test.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.2.0",
+    "better-sqlite3-session-store": "^0.1.0",
+    "compression": "^1.8.2",
+    "dotenv": "^18.0.10",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "express-ejs-layouts": "^2.5.1",
+    "express-rate-limit": "^8.7.4",
+    "express-session": "^1.19.0",
+    "helmet": "^8.3.0",
+    "marked": "^18.2.1",
+    "multer": "^2.5.0",
+    "node-cron": "^4.6.0",
+    "nodemailer": "^10.6.0",
+    "qrcode": "^1.5.4",
+    "sanitize-html": "^2.18.2"
+  }
+}

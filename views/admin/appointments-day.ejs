@@ -1,0 +1,26 @@
+<div class="page-head"><div><h1>Schedule</h1><p class="muted"><%= u.fmtDate(date) %><% if (closed) { %> · <strong class="bad-text">Clinic closed</strong><% } %></p></div>
+  <div class="actions">
+    <a class="btn btn-ghost" href="?date=<%= prev %>">← Prev</a>
+    <form method="get" class="inline"><input type="date" name="date" value="<%= date %>" data-autosubmit></form>
+    <a class="btn btn-ghost" href="?date=<%= u.todayStr() %>">Today</a>
+    <a class="btn btn-ghost" href="?date=<%= next %>">Next →</a>
+    <a class="btn btn-ghost" href="/admin/appointments?view=list">List view</a>
+    <a class="btn btn-primary" href="/admin/appointments/new?date=<%= date %>">+ New</a>
+  </div></div>
+<div class="day-board">
+  <% cols.forEach(function(col){ const items = rows.filter(r => r.staff_id === col.id); %>
+  <section class="day-col">
+    <h3><%= col.full_name %> <small class="muted"><%= items.length %></small></h3>
+    <% if (!items.length) { %><p class="muted small">No appointments</p><% } %>
+    <% items.forEach(function(a){ %>
+      <a class="slot-card st-<%= a.status %>" href="/admin/appointments/<%= a.id %>">
+        <strong><%= u.fmtTime(a.start_time) %>–<%= u.fmtTime(a.end_time) %></strong>
+        <span><%= a.patient_name %></span><small><%= a.service_title %> · <%= a.status.replace('_',' ') %></small>
+      </a>
+    <% }) %>
+    <a class="add-slot" href="/admin/appointments/new?date=<%= date %>&staff=<%= col.id %>">+ Add</a>
+  </section>
+  <% }) %>
+  <% const un = rows.filter(r => !r.staff_id); if (un.length) { %><section class="day-col"><h3>Unassigned</h3><% un.forEach(function(a){ %><a class="slot-card st-<%= a.status %>" href="/admin/appointments/<%= a.id %>"><strong><%= u.fmtTime(a.start_time) %></strong><span><%= a.patient_name %></span></a><% }) %></section><% } %>
+</div>
+<p class="legend"><span class="badge badge-pending">pending</span> <span class="badge badge-confirmed">confirmed</span> <span class="badge badge-checked_in">checked in</span> <span class="badge badge-completed">completed</span> <span class="badge badge-no_show">no show</span></p>

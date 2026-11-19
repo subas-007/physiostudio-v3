@@ -1,0 +1,147 @@
+{
+ "blocks": {
+  "home.hero.eyebrow": "Physiotherapy clinic in Pani Pokhari, Kathmandu",
+  "home.hero.title": "Destination for Relief & Wellness",
+  "home.hero.subtitle": "Our clinic is equipped with modern diagnostic and therapy equipment, so every assessment is precise and every step of your recovery is measured. Personalised care from experienced physiotherapists – in a calm, clean space.",
+  "home.hero.image": "/uploads/about/250b0fc218e627ae44e20b5f5c9c60d4.jpg",
+  "home.stat1.value": "7am–7pm",
+  "home.stat1.label": "Care, Sunday to Friday",
+  "home.stat2.value": "3+",
+  "home.stat2.label": "Expert physiotherapists",
+  "home.stat3.value": "499+",
+  "home.stat3.label": "Patients treated",
+  "home.stat4.value": "15+",
+  "home.stat4.label": "Years of experience",
+  "about.title": "Personalised physiotherapy, built around you",
+  "about.body": "At Physio Studio we combine more than 15 years of clinical experience with modern facilities to deliver physiotherapy that is tailored to each person. Every plan starts with a thorough assessment and is built from evidence-based techniques – manual therapy, exercise prescription and therapeutic modalities – for both musculoskeletal and neurological conditions.\n\nWhether you are recovering from surgery or injury, managing a long-term condition, preventing problems before they start, or chasing better performance, we create a welcoming environment and work alongside you. We encourage every patient to take an active role in their recovery, because the best results come from partnership.",
+  "about.image": "/uploads/about/9f3092f1f055d334dd73c4ab0143ca66.jpg",
+  "about.mission": "To provide exceptional, personalised physiotherapy care that empowers our patients to achieve optimal health and well-being, with an uncompromising commitment to clinical excellence.",
+  "about.vision": "To be a leading physiotherapy provider in Nepal, known for patient-centred care, innovative treatment and a lasting contribution to the long-term health and wellness of our community.",
+  "founder.name": "Pragya Pyakurel",
+  "founder.title": "MPT (Ortho) · Consultant Physiotherapist & Founder",
+  "founder.message": "When I started Physio Studio, the goal was simple: make high-quality, personalised physiotherapy accessible, and help people get back to living full, active lives.\n\nWe treat the whole person, not just the symptom. That is why we keep investing in our facilities and in the latest evidence-based techniques, and why we work hard to make the clinic a supportive, comfortable space. We will keep listening, learning and improving – because your recovery is our purpose.",
+  "founder.image": "/uploads/about/44fbb19f9de6f43c6216fa164b088c35.jpg",
+  "founder.stat_success": "98%",
+  "cta.title": "Ready to move without pain?",
+  "cta.text": "Book an assessment online in under a minute. We will confirm instantly and remind you by email and WhatsApp before your visit.",
+  "attention.title": "Where do you need attention?",
+  "finder.title": "Where does it hurt?",
+  "finder.text": "Tap the area that is bothering you. We will show you how we treat it.",
+  "steps.title": "What happens at your first visit",
+  "steps.1": "Book online or call us. Choose a time that suits you; you will get a confirmation straight away.",
+  "steps.2": "A 60-minute assessment: we listen to your history, test movement and strength, and find the cause.",
+  "steps.3": "Treatment begins the same day, with a written plan and exercises you can do at home.",
+  "steps.4": "We measure progress at every visit and adjust the plan until you are back to what you love.",
+  "packages.title": "Care plans",
+  "packages.text": "Committing to a course of treatment costs less per session and keeps your recovery on track.",
+  "gallery.title": "Inside the studio",
+  "exercises.title": "Exercises to do at home",
+  "exercises.text": "Short videos from our physiotherapists. Only do the exercises your therapist has recommended for you, and stop if anything causes sharp pain.",
+  "callback.title": "Rather talk to someone first?",
+  "callback.text": "Leave your number and we will call you back within working hours."
+ },
+ "services": {
+  "post-surgical-rehabilitation": {
+   "slug": "post-surgical-rehabilitation",
+   "summary": "Structured recovery after joint replacement, ligament repair or spinal surgery – restoring strength, mobility and confidence.",
+   "body": "Undergoing orthopaedic surgery – whether it is a joint replacement, ligament reconstruction or spinal procedure – is only the first step. What happens in the weeks that follow largely decides the final outcome.\n\n### How we help\n- Close coordination with your surgeon's protocol and precautions\n- Pain and swelling management in the early phase\n- Progressive range-of-motion, strengthening and gait training\n- Balance, proprioception and return-to-activity testing\n\nWe set clear milestones and measure progress at every visit, so you always know where you stand.",
+   "image": "/uploads/service/ae08f66447f10fd76e070c0093c23124.jpg"
+  },
+  "sports-injury-rehabilitation": {
+   "slug": "sports-injury-rehabilitation",
+   "summary": "From sprains and strains to ligament injuries – get back to your sport stronger and with lower risk of re-injury.",
+   "body": "Sport and physical activity are central to a vibrant lifestyle, but they naturally carry a risk of injury. Our sports rehabilitation programmes go beyond pain relief to restore full function.\n\n### What it includes\n- Detailed movement and load assessment\n- Manual therapy and soft-tissue work\n- Sport-specific strength, agility and conditioning\n- Graded return-to-play plan and injury-prevention advice",
+   "image": "/uploads/service/69c26b79b2230044ed501d685d3e9f9c.jpg"
+  },
+  "joint-pain-management": {
+   "slug": "joint-pain-management",
+   "summary": "Relief for chronic knee, hip, shoulder and other joint pain through targeted, evidence-based therapy.",
+   "body": "Chronic joint pain can become a constant barrier to enjoying life's simple pleasures. We identify what is driving your pain and treat the cause, not only the symptom.\n\n### Our approach\n- Assessment of joint mechanics, muscle balance and posture\n- Mobilisation, manual therapy and therapeutic modalities\n- Personalised exercise programme you can continue at home\n- Education on activity modification and joint protection",
+   "image": "/uploads/service/4f7d203afe967fa4e8e7cc7e9f36a63c.jpg"
+  },
+  "osteoarthritis-management": {
+   "slug": "osteoarthritis-management",
+   "summary": "A proactive, long-term plan to reduce pain, keep joints moving and stay independent.",
+   "body": "Living with osteoarthritis brings daily physical challenges, but a precise, proactive management plan can reduce pain and keep you active.\n\n### Programme elements\n- Strengthening of the muscles that support affected joints\n- Mobility and flexibility work\n- Pain-relief modalities\n- Weight-bearing guidance, walking aids and home-exercise plans",
+   "image": "/uploads/service/e2959dee6b3ffebe506e244a9df85584.jpg"
+  },
+  "chronic-pain-management": {
+   "slug": "chronic-pain-management",
+   "summary": "A whole-person approach to persistent pain that helps you regain control of daily life.",
+   "body": "Persistent pain can change how you interact with the world. With the right approach – combining hands-on care, graded activity and education about pain – it is possible to regain control.\n\n### What to expect\n- Comprehensive assessment of physical and lifestyle factors\n- Graded exercise and pacing strategies\n- Manual therapy and modalities where helpful\n- Self-management tools for long-term results",
+   "image": "/uploads/service/a67e18c451f73c5d112a60a1df81a205.jpg"
+  },
+  "postural-correction-and-ergonomics": {
+   "slug": "postural-correction-and-ergonomics",
+   "summary": "Fix the neck, shoulder and back strain that comes from desks, phones and long hours of sitting.",
+   "body": "In an increasingly digital world, poor posture often shows up as chronic neck and back strain, headaches and fatigue.\n\n### We help with\n- Postural and movement assessment\n- Targeted strengthening and mobility exercises\n- Workstation and ergonomic advice for home and office\n- Habit-building plans that fit your daily routine",
+   "image": "/uploads/service/188a6f426f200db0ee2d1c15b96a81a7.jpg"
+  },
+  "manual-therapy": {
+   "slug": "manual-therapy",
+   "summary": "Skilled hands-on techniques to reduce pain, release tight tissues and restore joint movement.",
+   "body": "Manual therapy is a cornerstone of effective orthopaedic physiotherapy, offering targeted relief and improved mobility.\n\n### Techniques include\n- Joint mobilisation and manipulation\n- Soft-tissue and myofascial release\n- Muscle energy techniques\n- Combined with exercise for lasting results",
+   "image": "/uploads/service/7579a20e1c8630fcb7d06331466ed2d1.jpg"
+  },
+  "initial-assessment": {
+   "slug": "initial-assessment",
+   "summary": "A full assessment with a physiotherapist and a written treatment plan.",
+   "body": "",
+   "image": null
+  }
+ },
+ "staff": {
+  "pragya-pyakurel": {
+   "slug": "pragya-pyakurel",
+   "designation": "Consultant Physiotherapist & Founder",
+   "qualification": "MPT (Orthopaedics)",
+   "bio": "Pragya founded Physio Studio to make high-quality, personalised physiotherapy accessible in Kathmandu. She specialises in orthopaedic rehabilitation, joint pain and post-surgical recovery.",
+   "photo": "/uploads/doctors/64fb7cec3253f47f2818a6d74d3837dd.jpg"
+  },
+  "apeksha-khadka": {
+   "slug": "apeksha-khadka",
+   "designation": "Physiotherapist",
+   "qualification": "",
+   "bio": "",
+   "photo": "/uploads/doctors/31b6b1a688b5278aa841039f261b13c7.png"
+  },
+  "shraddha-manandhar": {
+   "slug": "shraddha-manandhar",
+   "designation": "Physiotherapist",
+   "qualification": "",
+   "bio": "",
+   "photo": "/uploads/doctors/0a0bf3217bcaff0d880d886079cf8ba9.png"
+  }
+ },
+ "why": {
+  "Experienced Therapists": "Qualified physiotherapists with years of hands-on clinical practice.",
+  "Advanced Technology": "Modern diagnostic and therapy equipment for precise assessment and tracking.",
+  "Convenient & Accessible": "Central Pani Pokhari location, open 7 AM – 7 PM, Sunday to Friday.",
+  "Evidence-Based Treatment": "Every plan follows current clinical research and best practice.",
+  "Expert Consultations": "One-to-one time with a physiotherapist who listens.",
+  "Nutrition Strategies": "Practical guidance that supports healing and recovery.",
+  "Soothing, Clean Ambiance": "A calm, spotless space designed for comfort.",
+  "Support & Motivation": "We stay with you from the first session to full recovery."
+ },
+ "testimonials": {
+  "Ganesh Khanal": "[Paste the original review text from the current website here, then tick \"Show on website\".]",
+  "Quan Chunyan": "[Paste the original review text from the current website here, then tick \"Show on website\".]",
+  "Prasid Malla": "[Paste the original review text from the current website here, then tick \"Show on website\".]",
+  "Tika Rana Magar": "[Paste the original review text from the current website here, then tick \"Show on website\".]",
+  "Sabin Man Dangol": "[Paste the original review text from the current website here, then tick \"Show on website\".]",
+  "Rikhi Bau": "[Paste the original review text from the current website here, then tick \"Show on website\".]"
+ },
+ "post": {
+  "slug": "10-essential-benefits-of-regular-physiotherapy",
+  "body": "Physiotherapy combines hands-on treatment, guided exercise and education to restore movement and relieve pain. Regular sessions offer benefits well beyond recovering from an injury.\n\n1. **Pain relief without relying on medication** – manual therapy, exercise and modalities reduce pain at its source.\n2. **Faster, safer recovery after surgery** – structured rehabilitation restores strength and range of motion.\n3. **Better mobility and flexibility** – keep joints and muscles moving freely.\n4. **Injury prevention** – find and fix weak links before they cause problems.\n5. **Improved balance** – lower the risk of falls, especially for older adults.\n6. **Management of long-term conditions** – such as osteoarthritis, back pain and diabetes-related problems.\n7. **Better posture** – reduce the strain of desk work and screen time.\n8. **Sports performance** – move more efficiently and recover faster.\n9. **Neurological recovery** – support after stroke and other neurological conditions.\n10. **Confidence and independence** – understand your body and how to look after it.\n\nEvery treatment plan at Physio Studio is tailored to your age, medical history and goals. [Book an assessment](/book) to get started.",
+  "excerpt": "Physiotherapy is not only for injuries. Here is how regular sessions help you move better, feel better and stay independent."
+ },
+ "gallery": [
+  "/uploads/about/250b0fc218e627ae44e20b5f5c9c60d4.jpg",
+  "/uploads/about/9f3092f1f055d334dd73c4ab0143ca66.jpg",
+  "/uploads/service/69c26b79b2230044ed501d685d3e9f9c.jpg",
+  "/uploads/service/ae08f66447f10fd76e070c0093c23124.jpg",
+  "/uploads/service/4f7d203afe967fa4e8e7cc7e9f36a63c.jpg",
+  "/uploads/service/7579a20e1c8630fcb7d06331466ed2d1.jpg"
+ ]
+}

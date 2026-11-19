@@ -1,0 +1,11 @@
+<header class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Our team</nav><h1>Your physiotherapists</h1></div></header>
+<section class="band band-tight"><div class="wrap people">
+  <% team.forEach(function(m){ %>
+  <article class="person">
+    <a href="/team/<%= m.slug %>" class="person-photo"><% if (m.photo) { %><img src="<%= m.photo %>" alt="<%= m.full_name %>" width="360" height="440" loading="lazy"><% } %></a>
+    <h2><a href="/team/<%= m.slug %>"><%= m.full_name %></a></h2>
+    <p><%= m.designation %><% if (m.qualification) { %>, <%= m.qualification %><% } %></p>
+    <% if (m.is_bookable) { %><a class="text-link" href="/book?therapist=<%= m.id %>">Book with <%= m.full_name.split(' ')[0] %></a><% } %>
+  </article>
+  <% }) %>
+</div></section>

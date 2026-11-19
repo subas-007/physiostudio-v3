@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title><%= title %> · <%= s.clinic_name %></title>
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/static/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/site.css"><link rel="stylesheet" href="/theme.css">
+</head>
+<body class="portal">
+  <%- include('../partials/site-header') %>
+  <main id="main" class="wrap portal-main">
+    <div class="portal-head">
+      <div><h1>Namaste, <%= patient.full_name.split(' ')[0] %></h1><p class="muted">Patient ID <strong><%= patient.patient_code %></strong></p></div>
+      <nav class="portal-nav"><a href="/portal" class="<%= path === '/portal' ? 'active' : '' %>">Appointments &amp; invoices</a><a href="/portal/profile" class="<%= path === '/portal/profile' ? 'active' : '' %>">My details</a><a href="/book" class="btn btn-primary btn-sm">Book new</a>
+        <form method="post" action="/logout" class="inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="linklike">Sign out</button></form></nav>
+    </div>
+    <%- include('../partials/flash', { error: null, errors: typeof errors !== 'undefined' ? errors : null }) %>
+    <%- body %>
+  </main>
+  <footer class="footer slim"><div class="wrap footer-base"><span>&copy; <%= new Date().getFullYear() %> <%= s.clinic_name %> · <%= s.phone_primary %></span><a href="/privacy">Privacy</a></div></footer>
+  <script src="/static/js/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow">
+  <title><%= title %> · Admin · <%= s.clinic_name %></title>
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/admin.css"><link rel="stylesheet" href="/theme.css">
+</head>
+<body class="admin">
+<aside class="sidebar" id="sidebar">
+  <a href="/admin" class="side-brand"><img src="<%= s.logo %>" alt="" height="34"><span>Admin</span></a>
+  <nav>
+    <% const nav = [
+      ['/admin', 'Dashboard', 'dashboard.view', 'grid'],
+      ['/admin/appointments', 'Schedule', 'appointments.view', 'cal'],
+      ['/admin/patients', 'Patients', 'patients.view', 'users'],
+      ['/admin/invoices', 'Invoices', 'invoices.view', 'receipt'],
+      ['/admin/reports', 'Reports', 'reports.view', 'chart'],
+      ['/admin/cms', 'Website', 'cms.manage', 'globe'],
+      ['/admin/cms/messages', 'Messages', 'messages.view', 'mail'],
+      ['/admin/logs/notifications', 'Reminders log', 'notifications.view', 'bell'],
+      ['/admin/users', 'Staff users', 'users.manage', 'key'],
+      ['/admin/holidays', 'Holidays & leave', 'settings.manage', 'sun'],
+      ['/admin/settings', 'Settings', 'settings.manage', 'cog'],
+      ['/admin/logs/audit', 'Audit log', 'audit.view', 'shield'],
+    ]; %>
+    <% nav.forEach(function(n){ if (!can(n[2])) return; const active = n[0] === '/admin' ? path === '/admin' : (path.indexOf(n[0]) === 0 && !(n[0] === '/admin/cms' && path.indexOf('/admin/cms/messages') === 0)); %>
+      <a href="<%= n[0] %>" class="<%= active ? 'active' : '' %>"><img src="/static/img/n-<%= n[3] %>.svg" alt="" width="18" height="18"><span><%= n[1] %></span><% if (n[1] === 'Messages' && unread) { %><b class="pill"><%= unread %></b><% } %></a>
+    <% }) %>
+  </nav>
+  <div class="side-foot"><a href="/" target="_blank">View website ↗</a></div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <button class="icon-btn" data-sidebar-toggle aria-label="Toggle menu">☰</button>
+    <form action="/admin/patients" method="get" class="top-search"><input type="search" name="q" placeholder="Search patients by name, phone, ID…" aria-label="Search patients"></form>
+    <div class="top-user">
+      <a href="/admin/appointments/new" class="btn btn-primary btn-sm">+ Appointment</a>
+      <a href="/admin/account" class="who"><strong><%= user.full_name %></strong><small><%= user.role %></small></a>
+      <form method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-ghost btn-sm">Sign out</button></form>
+    </div>
+  </header>
+  <div class="content">
+    <%- include('../partials/flash', { error: typeof error !== 'undefined' ? error : null, errors: typeof errors !== 'undefined' ? errors : null }) %>
+    <%- body %>
+  </div>
+</div>
+<script src="/static/js/site.js" defer></script>
+<script src="/static/js/admin.js" defer></script>
+</body>
+</html>

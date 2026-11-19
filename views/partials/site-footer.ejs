@@ -1,0 +1,37 @@
+<section class="closing">
+  <div class="wrap closing-inner">
+    <h2><%= c['cta.title'] %></h2>
+    <p><%= c['cta.text'] %></p>
+    <div class="closing-actions"><a href="/book" class="btn btn-marigold btn-lg">Book an assessment</a><a href="tel:<%= s.phone_primary %>" class="btn btn-line-light btn-lg">Call <%= s.phone_primary %></a></div>
+  </div>
+</section>
+<footer class="footer">
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <img src="<%= s.logo %>" alt="<%= s.clinic_name %>" height="48">
+      <p><%= s.tagline %>. Physiotherapy in Pani Pokhari, Kathmandu.</p>
+      <div class="social">
+        <% if (s.facebook_url) { %><a href="<%= s.facebook_url %>" rel="noopener" target="_blank"><img src="/static/img/i-facebook.svg" alt="" width="18" height="18"><span class="sr-only">Facebook</span></a><% } %>
+        <% if (s.instagram_url) { %><a href="<%= s.instagram_url %>" rel="noopener" target="_blank"><img src="/static/img/i-instagram.svg" alt="" width="18" height="18"><span class="sr-only">Instagram</span></a><% } %>
+        <% if (s.whatsapp_number) { %><a href="https://wa.me/<%= u.toE164(s.whatsapp_number).replace('+','') %>" rel="noopener" target="_blank"><img src="/static/img/i-whatsapp.svg" alt="" width="18" height="18"><span class="sr-only">WhatsApp</span></a><% } %>
+      </div>
+    </div>
+    <nav aria-label="Treatments"><h3>Treatments</h3><ul>
+      <li><a href="/services">All services</a></li><li><a href="/packages">Care plans</a></li><li><a href="/team">Physiotherapists</a></li><% if (typeof hasVideos !== 'undefined' && hasVideos) { %><li><a href="/exercises">Home exercises</a></li><% } %><li><a href="/blog">Health blog</a></li>
+    </ul></nav>
+    <nav aria-label="Patients"><h3>Patients</h3><ul>
+      <li><a href="/book">Book an appointment</a></li><li><a href="/portal">My appointments</a></li><li><a href="/faq">Questions</a></li><li><a href="/testimonials">Patient stories</a></li><li><a href="/privacy">Privacy notice</a></li>
+    </ul></nav>
+    <div><h3>Visit</h3>
+      <address><%= s.address %></address>
+      <p><a href="tel:<%= s.phone_primary %>"><%= s.phone_primary %></a><% if (s.phone_secondary) { %><br><a href="tel:<%= s.phone_secondary.replace(/-/g,'') %>"><%= s.phone_secondary %></a><% } %><br><a href="mailto:<%= s.email %>"><%= s.email %></a></p>
+      <p class="footer-hours"><%= s.hours_text %></p>
+    </div>
+  </div>
+  <div class="wrap footer-base"><span>© <%= new Date().getFullYear() %> <%= s.clinic_name %></span></div>
+</footer>
+<div class="dock" aria-label="Quick actions">
+  <a href="tel:<%= s.phone_primary %>" class="btn btn-line">Call</a>
+  <% if (s.whatsapp_number) { %><a href="https://wa.me/<%= u.toE164(s.whatsapp_number).replace('+','') %>" class="btn btn-line" target="_blank" rel="noopener">WhatsApp</a><% } %>
+  <a href="/book" class="btn btn-primary">Book a visit</a>
+</div>

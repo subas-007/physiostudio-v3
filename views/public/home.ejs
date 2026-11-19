@@ -1,0 +1,258 @@
+<%
+  const mapped = areas.filter(a => a.map_key);
+  const firstArea = mapped[0] || areas[0];
+%>
+<% if (slides.length) { %>
+<section class="slider" data-slider aria-roledescription="carousel" aria-label="<%= s.clinic_name %> highlights">
+  <div class="slides">
+    <% slides.forEach(function(sl, i){ %>
+    <article class="slide <%= i === 0 ? 'is-active' : '' %>" data-slide aria-roledescription="slide" aria-label="<%= i + 1 %> of <%= slides.length %>" <%= i === 0 ? '' : 'aria-hidden=true' %>>
+      <picture>
+        <% if (sl.image_mobile) { %><source media="(max-width: 700px)" srcset="<%= sl.image_mobile %>"><% } %>
+        <img src="<%= sl.image %>" alt="" class="focus-<%= sl.focus || 'center' %>" width="1600" height="1000" <%- i === 0 ? 'fetchpriority="high"' : 'loading="lazy"' %>>
+      </picture>
+      <div class="wrap slide-copy">
+        <% if (i === 0) { %><h1><%= sl.title %></h1><% } else { %><h2 class="slide-title"><%= sl.title %></h2><% } %>
+        <% if (sl.text) { %><p><%= sl.text %></p><% } %>
+        <div class="slide-actions">
+          <% if (sl.button_label && sl.button_link) { %><a class="btn btn-marigold btn-lg" href="<%= sl.button_link %>" <%- i === 0 ? '' : 'tabindex="-1"' %>><%= sl.button_label %></a><% } %>
+          <a class="btn btn-line-light btn-lg" href="tel:<%= s.phone_primary %>" <%- i === 0 ? '' : 'tabindex="-1"' %>>Call <%= s.phone_primary %></a>
+        </div>
+      </div>
+    </article>
+    <% }) %>
+  </div>
+  <% if (slides.length > 1) { %>
+  <div class="wrap slider-controls">
+    <div class="slider-dots" role="group" aria-label="Choose a slide">
+      <% slides.forEach(function(sl, i){ %><button type="button" class="dot" data-slide-to="<%= i %>" aria-label="Show slide <%= i + 1 %>: <%= sl.title %>" aria-current="<%= i === 0 ? 'true' : 'false' %>"><span></span></button><% }) %>
+    </div>
+    <div class="slider-buttons">
+      <button type="button" class="round-btn light" data-slide-prev aria-label="Previous slide">‹</button>
+      <button type="button" class="round-btn light" data-slide-pause aria-label="Pause slideshow">❚❚</button>
+      <button type="button" class="round-btn light" data-slide-next aria-label="Next slide">›</button>
+    </div>
+  </div>
+  <% } %>
+</section>
+<% } else { %>
+<section class="page-head"><div class="wrap"><h1><%= c['home.hero.title'] %></h1><p class="lede"><%= c['home.hero.subtitle'] %></p></div></section>
+<% } %>
+
+<section class="band band-sage">
+  <dl class="wrap stat-grid">
+    <% [1,2,3,4].forEach(function(i){ %>
+    <div class="stat-card">
+      <img src="/static/img/n-<%= ['cal','users','chart','shield'][i - 1] %>.svg" alt="" width="44" height="44">
+      <dt><%= c['home.stat'+i+'.label'] %></dt>
+      <dd><%= c['home.stat'+i+'.value'] %></dd>
+    </div>
+    <% }) %>
+  </dl>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="band-head row">
+      <div>
+        <h2>Treatments</h2>
+        <p>Every programme starts with a full assessment and a written plan built around your goals. Sessions are one-to-one with the same physiotherapist.</p>
+      </div>
+      <a href="/services" class="text-link">All services</a>
+    </div>
+    <ul class="service-cards">
+      <% services.forEach(function(sv){ %>
+      <li>
+        <a class="service-card" href="/services/<%= sv.slug %>">
+          <span class="service-card-img"><% if (sv.image) { %><img src="<%= sv.image %>" alt="" width="640" height="480" loading="lazy"><% } %></span>
+          <span class="service-card-body">
+            <span class="service-card-title"><%= sv.title %></span>
+            <span><%= sv.summary %></span>
+            <span class="service-card-more">Learn more &rarr;</span>
+          </span>
+        </a>
+      </li>
+      <% }) %>
+    </ul>
+  </div>
+</section>
+
+<section class="band band-paper finder-band">
+  <div class="wrap finder-layout">
+    <div class="finder-intro">
+      <h2><%= c['finder.title'] %></h2>
+      <p><%= c['finder.text'] %></p>
+      <p class="hint">Tap the area that hurts to see how we treat it.</p>
+    </div>
+    <div class="finder" data-finder>
+      <div class="finder-body">
+        <div class="figure">
+          <svg viewBox="0 0 200 400" aria-hidden="true" focusable="false">
+            <g class="body-shape">
+              <circle cx="100" cy="40" r="23"/>
+              <path d="M70 80 Q100 70 130 80 L135 192 Q100 206 65 192 Z"/>
+              <path class="limb" d="M72 86 L54 160 L46 230"/>
+              <path class="limb" d="M128 86 L146 160 L154 230"/>
+              <path class="limb leg" d="M88 196 L84 290 L82 368"/>
+              <path class="limb leg" d="M112 196 L116 290 L118 368"/>
+              <path class="limb" d="M82 370 L68 382"/>
+              <path class="limb" d="M118 370 L132 382"/>
+            </g>
+          </svg>
+          <% mapped.forEach(function(a, i){ %>
+            <button type="button" class="hotspot hs-<%= a.map_key %>" data-area="<%= a.id %>" aria-pressed="<%= firstArea && a.id === firstArea.id ? 'true' : 'false' %>" aria-controls="area-<%= a.id %>"><span><%= a.title %></span></button>
+          <% }) %>
+        </div>
+        <div class="finder-panels" aria-live="polite">
+          <% areas.forEach(function(a){ %>
+          <article class="area-panel" id="area-<%= a.id %>" data-panel="<%= a.id %>" <%= firstArea && a.id === firstArea.id ? '' : 'hidden' %>>
+            <h3><%= a.title %></h3>
+            <% if (a.blurb) { %><p><%= a.blurb %></p><% } %>
+            <% if (a.service_title) { %><p class="area-service">Usually treated with <a href="/services/<%= a.service_slug %>"><%= a.service_title %></a><% if (a.duration_min) { %>, <%= a.duration_min %>-minute sessions<% } %>.</p><% } %>
+            <a class="btn btn-marigold" href="/book?area=<%= a.id %>">Book for <%= a.title.toLowerCase() %></a>
+          </article>
+          <% }) %>
+        </div>
+      </div>
+      <div class="area-chips" role="group" aria-label="Choose an area">
+        <% areas.forEach(function(a){ %><button type="button" class="chip" data-area="<%= a.id %>" aria-pressed="<%= firstArea && a.id === firstArea.id ? 'true' : 'false' %>"><%= a.title.replace(/ Pain$/, '') %></button><% }) %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-sage">
+  <div class="wrap">
+    <h2 class="band-title"><%= c['steps.title'] %></h2>
+    <ol class="steps">
+      <% [1,2,3,4].forEach(function(i){ if (!c['steps.'+i]) return; %><li><p><%= c['steps.'+i] %></p></li><% }) %>
+    </ol>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap founder">
+    <figure class="founder-photo"><img src="<%= c['founder.image'] %>" alt="<%= c['founder.name'] %>" width="520" height="640" loading="lazy"></figure>
+    <div class="founder-text">
+      <h2>A note from our founder</h2>
+      <div class="prose"><%- u.md(c['founder.message'].split(/\n\n/).slice(0, 2).join('\n\n')) %></div>
+      <p class="founder-sign"><strong><%= c['founder.name'] %></strong><br><%= c['founder.title'] %></p>
+      <a href="/about#founder" class="text-link">Read the full letter</a>
+    </div>
+  </div>
+</section>
+
+<% if (packages.length) { %>
+<section class="band band-pine">
+  <div class="wrap">
+    <div class="band-head"><h2><%= c['packages.title'] %></h2><p><%= c['packages.text'] %></p></div>
+    <div class="plans">
+      <% packages.forEach(function(p){ %>
+      <article class="plan <%= p.is_featured ? 'plan-featured' : '' %>">
+        <% if (p.badge) { %><p class="plan-badge"><%= p.badge %></p><% } %>
+        <h3><%= p.title %></h3>
+        <% if (p.audience) { %><p class="plan-for"><%= p.audience %></p><% } %>
+        <p class="plan-price"><% if (p.price != null) { %><strong><%= u.money(p.price).replace('.00','') %></strong> <span><%= p.price_unit %></span><% } else { %><strong>Ask us</strong> <span><%= p.price_unit %></span><% } %></p>
+        <% if (p.summary) { %><p><%= p.summary %></p><% } %>
+        <% if (p.featureList.length) { %><ul><% p.featureList.forEach(function(x){ %><li><%= x %></li><% }) %></ul><% } %>
+        <a class="btn <%= p.is_featured ? 'btn-marigold' : 'btn-line-light' %>" href="/book?package=<%= p.id %>">Start this plan</a>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<section class="band">
+  <div class="wrap why">
+    <h2>Why patients choose us</h2>
+    <ul class="why-list">
+      <% why.forEach(function(w){ %><li><% if (w.icon) { %><img src="<%= w.icon %>" alt="" width="36" height="36" loading="lazy"><% } %><div><h3><%= w.title %></h3><p><%= (w.body || '').split(/(?<=[.!?])\s/)[0] %></p></div></li><% }) %>
+    </ul>
+    <p class="why-more"><a class="text-link" href="/about">More about our approach</a></p>
+  </div>
+</section>
+
+<section class="band band-paper">
+  <div class="wrap">
+    <div class="band-head row"><h2>Your physiotherapists</h2><a href="/team" class="text-link">Meet the team</a></div>
+    <div class="people">
+      <% team.forEach(function(m){ %>
+      <article class="person">
+        <a href="/team/<%= m.slug %>" class="person-photo"><% if (m.photo) { %><img src="<%= m.photo %>" alt="<%= m.full_name %>" width="360" height="440" loading="lazy"><% } %></a>
+        <h3><a href="/team/<%= m.slug %>"><%= m.full_name %></a></h3>
+        <p><%= m.designation %><% if (m.qualification) { %>, <%= m.qualification %><% } %></p>
+        <% if (m.is_bookable) { %><a class="text-link" href="/book?therapist=<%= m.id %>">Book with <%= m.full_name.split(' ')[0] %></a><% } %>
+      </article>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<% if (testimonials.length) { %>
+<section class="band">
+  <div class="wrap">
+    <div class="band-head row"><h2>Patient stories</h2>
+      <div class="carousel-controls"><button type="button" class="round-btn" data-carousel-prev aria-label="Previous stories">‹</button><button type="button" class="round-btn" data-carousel-next aria-label="Next stories">›</button></div>
+    </div>
+    <div class="stories" data-carousel tabindex="0" aria-label="Patient stories">
+      <% testimonials.forEach(function(t){ %>
+      <figure class="story">
+        <% if (t.rating) { %><p class="stars" aria-label="<%= t.rating %> out of 5 stars"><%= '★'.repeat(t.rating) %><span><%= '★'.repeat(5 - t.rating) %></span></p><% } %>
+        <blockquote><%= t.body %></blockquote>
+        <% if (t.body.length > 260) { %><a class="story-more" href="/testimonials#story-<%= t.id %>">Read <%= t.name.split(' ')[0] %>'s full story</a><% } %>
+        <figcaption><% if (t.photo) { %><img src="<%= t.photo %>" alt="" width="44" height="44" loading="lazy"><% } %><span><strong><%= t.name %></strong><% if (t.role) { %><br><%= t.role %><% } %></span></figcaption>
+      </figure>
+      <% }) %>
+    </div>
+    <p class="stories-foot"><a href="/testimonials" class="text-link">Read all stories</a><% if (s.google_reviews_url) { %> <a href="<%= s.google_reviews_url %>" class="text-link" target="_blank" rel="noopener">Reviews on Google</a><% } %></p>
+  </div>
+</section>
+<% } %>
+
+<% if (gallery.length) { %>
+<section class="band band-paper">
+  <div class="wrap">
+    <h2 class="band-title"><%= c['gallery.title'] %></h2>
+    <div class="gallery">
+      <% gallery.forEach(function(g){ %><button type="button" class="gallery-item" data-lightbox-src="<%= g.image %>" data-lightbox-caption="<%= g.caption || '' %>"><img src="<%= g.image %>" alt="<%= g.caption || 'Photo of the studio' %>" loading="lazy" width="400" height="300"></button><% }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<% if (videos.length || posts.length) { %>
+<section class="band">
+  <div class="wrap learn">
+    <% if (videos.length) { %>
+    <div>
+      <div class="band-head row"><h2><%= c['exercises.title'] %></h2><a class="text-link" href="/exercises">Exercise library</a></div>
+      <div class="video-list">
+        <% videos.forEach(function(v){ %><%- include('../partials/video', { v }) %><% }) %>
+      </div>
+    </div>
+    <% } %>
+    <% if (posts.length) { %>
+    <div>
+      <div class="band-head row"><h2>From the blog</h2><a class="text-link" href="/blog">All articles</a></div>
+      <ul class="post-list">
+        <% posts.forEach(function(p){ %><li><a href="/blog/<%= p.slug %>"><% if (p.cover) { %><img src="<%= p.cover %>" alt="" width="160" height="110" loading="lazy"><% } %><span><small><%= p.category || 'Article' %>, <%= u.fmtDate(p.published_at) %></small><strong><%= p.title %></strong></span></a></li><% }) %>
+      </ul>
+    </div>
+    <% } %>
+  </div>
+</section>
+<% } %>
+
+<section class="band band-sage">
+  <div class="wrap ask">
+    <div>
+      <h2>Questions people ask</h2>
+      <div class="faq">
+        <% faqs.forEach(function(f){ %><details><summary><%= f.question %></summary><p><%= f.answer %></p></details><% }) %>
+      </div>
+      <a class="text-link" href="/faq">All questions</a>
+    </div>
+    <%- include('../partials/callback') %>
+  </div>
+</section>

@@ -1,0 +1,17 @@
+<section class="band"><div class="wrap narrow">
+  <div class="panel success">
+    <div class="success-icon" aria-hidden="true">✓</div>
+    <h1><%= a.status === 'confirmed' ? 'You\'re booked!' : 'Request received' %></h1>
+    <p class="lead"><%= a.status === 'confirmed' ? 'Your appointment is confirmed.' : 'We will confirm your appointment shortly.' %> A confirmation has been sent to your email/WhatsApp.</p>
+    <dl class="kv">
+      <dt>Reference</dt><dd><strong><%= a.ref %></strong></dd>
+      <dt>Service</dt><dd><%= a.service_title %></dd>
+      <dt>Date</dt><dd><%= u.fmtDate(a.date) %></dd>
+      <dt>Time</dt><dd><%= u.fmtTime(a.start_time) %> – <%= u.fmtTime(a.end_time) %></dd>
+      <dt>Therapist</dt><dd><%= a.staff_name %></dd>
+      <dt>Location</dt><dd><%= s.address %></dd>
+    </dl>
+    <p class="btn-row"><a class="btn btn-primary" href="<%= manageUrl %>">Change or cancel</a> <% if (!user) { %><a class="btn btn-line" href="/register">Create a patient account</a><% } else { %><a class="btn btn-line" href="/portal">My appointments</a><% } %></p>
+    <p class="hint">Keep this link: you can use it to move or cancel your appointment up to <%= s.cancel_cutoff_hours %> hours before.</p>
+  </div>
+</div></section>

@@ -1,0 +1,7 @@
+<% if (pg && pg.pages > 1) { const qs = (n) => { const p = new URLSearchParams(query || {}); p.set('page', n); return '?' + p.toString(); }; %>
+<nav class="pager" aria-label="Pages">
+  <% if (pg.page > 1) { %><a href="<%= qs(pg.page-1) %>">&larr; Prev</a><% } %>
+  <span>Page <%= pg.page %> of <%= pg.pages %> · <%= pg.total %> records</span>
+  <% if (pg.page < pg.pages) { %><a href="<%= qs(pg.page+1) %>">Next &rarr;</a><% } %>
+</nav>
+<% } %>

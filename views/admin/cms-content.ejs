@@ -1,0 +1,10 @@
+<div class="page-head"><h1>Page text &amp; images</h1></div>
+<form method="post" action="/admin/cms/content?_csrf=<%= csrf %>" enctype="multipart/form-data" class="form">
+  <% let section = null; blocks.forEach(function(b, i){ const name = 'b_' + b.key.replace(/\./g,'__'); if (b.section !== section) { if (section !== null) { %></fieldset><% } section = b.section; %><fieldset class="card"><legend><%= section.charAt(0).toUpperCase() + section.slice(1) %></legend><% } %>
+    <% if (b.type === 'text') { %><label><%= b.label %><input name="<%= name %>" value="<%= b.value %>" maxlength="2000"></label>
+    <% } else if (b.type === 'textarea') { %><label><%= b.label %><textarea name="<%= name %>" rows="3"><%= b.value %></textarea></label>
+    <% } else if (b.type === 'markdown') { %><label><%= b.label %> <small class="muted">Markdown: **bold**, *italic*, ### heading, - list</small><textarea name="<%= name %>" rows="8" class="mono"><%= b.value %></textarea></label>
+    <% } else if (b.type === 'image') { %><div class="img-field"><img src="<%= b.value %>" alt="" height="90"><label><%= b.label %> – path<input name="<%= name %>" value="<%= b.value %>"></label><label>…or upload new<input type="file" name="<%= name %>_file" accept="image/jpeg,image/png,image/webp,image/gif"></label></div><% } %>
+  <% }) %></fieldset>
+  <div class="sticky-save"><button class="btn btn-primary">Save all changes</button></div>
+</form>

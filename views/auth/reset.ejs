@@ -1,0 +1,11 @@
+<section class="section auth"><div class="container auth-wrap">
+  <form method="post" action="/reset/<%= token %>" class="card form auth-card">
+    <h1>Choose a new password</h1>
+    <%- include('../partials/flash', { flashes: [] }) %>
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <label>New password<input type="password" name="password" required minlength="10" maxlength="128" autocomplete="new-password"></label>
+    <label>Confirm new password<input type="password" name="password2" required minlength="10" maxlength="128" autocomplete="new-password"></label>
+    <p class="small muted">At least 10 characters with 3 of: lowercase, uppercase, number, symbol.</p>
+    <button class="btn btn-primary btn-block">Save password</button>
+  </form>
+</div></section>

@@ -1,0 +1,29 @@
+<header class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / About</nav><h1><%= c['about.title'] %></h1></div></header>
+<section class="band band-tight">
+  <div class="wrap split">
+    <figure class="split-photo"><img src="<%= c['about.image'] %>" alt="Inside <%= s.clinic_name %>" width="560" height="640"></figure>
+    <div>
+      <div class="prose"><%- u.md(c['about.body']) %></div>
+      <div class="mv">
+        <section><h2>Mission</h2><p><%= c['about.mission'] %></p></section>
+        <section><h2>Vision</h2><p><%= c['about.vision'] %></p></section>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="band band-sage" id="founder">
+  <div class="wrap founder">
+    <figure class="founder-photo"><img src="<%= c['founder.image'] %>" alt="<%= c['founder.name'] %>" loading="lazy" width="520" height="640"></figure>
+    <div class="founder-text"><h2>A note from our founder</h2><div class="prose"><%- u.md(c['founder.message']) %></div><p class="founder-sign"><strong><%= c['founder.name'] %></strong><br><%= c['founder.title'] %></p></div>
+  </div>
+</section>
+<section class="band">
+  <div class="wrap why"><h2>Why patients choose us</h2>
+    <ul class="why-list"><% why.forEach(function(w){ %><li><% if (w.icon) { %><img src="<%= w.icon %>" alt="" width="36" height="36" loading="lazy"><% } %><div><h3><%= w.title %></h3><p><%= w.body %></p></div></li><% }) %></ul>
+  </div>
+</section>
+<% if (gallery.length) { %>
+<section class="band band-paper"><div class="wrap"><h2 class="band-title"><%= c['gallery.title'] %></h2>
+  <div class="gallery"><% gallery.forEach(function(g){ %><button type="button" class="gallery-item" data-lightbox-src="<%= g.image %>" data-lightbox-caption="<%= g.caption || '' %>"><img src="<%= g.image %>" alt="<%= g.caption || 'Photo of the studio' %>" loading="lazy" width="400" height="300"></button><% }) %></div>
+</div></section>
+<% } %>

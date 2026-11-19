@@ -1,0 +1,79 @@
+<div class="page-head"><div><p class="eyebrow"><%= p.patient_code %><% if (p.is_archived) { %> · ARCHIVED<% } %></p><h1><%= p.full_name %></h1>
+  <p class="muted"><%= [p.gender, p.date_of_birth ? u.ageFrom(p.date_of_birth) + ' yrs' : null, p.phone, p.email].filter(Boolean).join(' · ') %></p></div>
+  <div class="actions">
+    <% if (can('appointments.manage')) { %><a class="btn btn-primary" href="/admin/appointments/new?patient=<%= p.id %>">+ Appointment</a><% } %>
+    <% if (can('invoices.manage')) { %><a class="btn btn-ghost" href="/admin/invoices/new?patient=<%= p.id %>">+ Invoice</a><% } %>
+    <% if (can('patients.manage')) { %><a class="btn btn-ghost" href="/admin/patients/<%= p.id %>/edit">Edit</a><% } %>
+    <% if (can('clinical.view')) { %><a class="btn btn-ghost" href="/admin/patients/<%= p.id %>/record" target="_blank">Print record</a><% } %>
+  </div></div>
+<nav class="tabs"><% [['overview','Overview'],['appointments','Appointments ('+appts.length+')']].concat(notes ? [['clinical','Clinical notes ('+notes.length+')']] : []).concat(invoices ? [['billing','Billing ('+invoices.length+')']] : []).forEach(function(t){ %><a href="?tab=<%= t[0] %>" class="<%= tab === t[0] ? 'active' : '' %>"><%= t[1] %></a><% }) %></nav>
+
+<% if (tab === 'overview') { %>
+<div class="grid2">
+  <section class="card"><h2>Details</h2><dl class="kv">
+    <dt>Address</dt><dd><%= p.address || '—' %></dd><dt>Occupation</dt><dd><%= p.occupation || '—' %></dd><dt>WhatsApp</dt><dd><%= p.whatsapp || p.phone %></dd>
+    <dt>Emergency contact</dt><dd><%= p.emergency_contact_name || '—' %> <%= p.emergency_contact_phone || '' %></dd><dt>Referred by</dt><dd><%= p.referred_by || '—' %></dd>
+    <dt>Registered</dt><dd><%= p.created_at %></dd><dt>Consent</dt><dd><%= p.consent_treatment ? 'Treatment ✓' : 'Treatment ✗' %> · <%= p.consent_communication ? 'Messages ✓' : 'Messages ✗' %><% if (p.consent_at) { %> <small class="muted">(<%= p.consent_at %>)</small><% } %></dd>
+    <dt>Reminders</dt><dd><%= p.notify_email ? 'Email' : '' %> <%= p.notify_whatsapp ? 'WhatsApp' : '' %></dd>
+    <dt>Portal</dt><dd><%= p.user_id ? 'Active (' + p.portal_email + ')' : 'No account' %>
+      <% if (!p.user_id && can('patients.manage')) { %><form method="post" action="/admin/patients/<%= p.id %>/invite" class="inline"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="linklike">Email invitation</button></form><% } %></dd>
+  </dl></section>
+  <section class="card"><h2>Medical background</h2><dl class="kv"><dt>History</dt><dd class="pre"><%= p.medical_history || '—' %></dd><dt>Allergies</dt><dd class="pre <%= p.allergies ? 'bad-text' : '' %>"><%= p.allergies || 'None recorded' %></dd><dt>Medications</dt><dd class="pre"><%= p.current_medications || '—' %></dd></dl>
+    <% if (invoices && balance > 0) { %><p class="alert alert-error">Outstanding balance: <strong><%= u.money(balance) %></strong></p><% } %>
+    <% if (can('patients.manage')) { %><form method="post" action="/admin/patients/<%= p.id %>/archive" data-confirm="<%= p.is_archived ? 'Restore' : 'Archive' %> this patient?"><input type="hidden" name="_csrf" value="<%= csrf %>"><% if (p.is_archived) { %><input type="hidden" name="restore" value="1"><% } %><button class="btn btn-sm btn-ghost"><%= p.is_archived ? 'Restore patient' : 'Archive patient' %></button></form><% } %>
+  </section>
+</div>
+<% } %>
+
+<% if (tab === 'appointments') { %>
+<div class="card"><table class="table"><thead><tr><th>Date</th><th>Time</th><th>Service</th><th>Therapist</th><th>Status</th><th>Ref</th></tr></thead><tbody>
+<% if (!appts.length) { %><tr><td colspan="6" class="muted">No appointments.</td></tr><% } %>
+<% appts.forEach(function(a){ %><tr><td><%= u.fmtDate(a.date) %></td><td><%= u.fmtTime(a.start_time) %></td><td><%= a.service_title %></td><td><%= a.staff_name %></td><td><span class="badge badge-<%= a.status %>"><%= a.status.replace('_',' ') %></span></td><td><a href="/admin/appointments/<%= a.id %>"><%= a.ref %></a></td></tr><% }) %>
+</tbody></table></div>
+<% } %>
+
+<% if (tab === 'clinical' && notes) { %>
+<div class="grid2">
+  <% if (can('clinical.write')) { %>
+  <form method="post" action="/admin/patients/<%= p.id %>/notes" class="card form">
+    <h2>New SOAP note</h2>
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="row3"><label>Type<select name="note_type"><option value="progress">Progress</option><option value="initial_assessment">Initial assessment</option><option value="discharge">Discharge</option></select></label>
+      <label>Pain (0–10)<input type="number" name="pain_score" min="0" max="10"></label>
+      <label>Visit<select name="appointment_id"><option value="">—</option><% appts.filter(a => a.status !== 'cancelled').slice(0, 15).forEach(function(a){ %><option value="<%= a.id %>"><%= a.date %> <%= a.start_time %></option><% }) %></select></label></div>
+    <label>S – Subjective <small class="muted">(patient report, history, symptoms)</small><textarea name="subjective" rows="3"></textarea></label>
+    <label>O – Objective <small class="muted">(ROM, strength, special tests, observations)</small><textarea name="objective" rows="3"></textarea></label>
+    <label>A – Assessment <small class="muted">(clinical impression, progress)</small><textarea name="assessment" rows="3"></textarea></label>
+    <label>P – Plan <small class="muted">(treatment given, HEP, next steps)</small><textarea name="plan" rows="3"></textarea></label>
+    <div class="btn-row"><button class="btn btn-ghost" name="sign" value="0">Save draft</button><button class="btn btn-primary" name="sign" value="1">Save &amp; sign</button></div>
+    <p class="small muted">Signed notes are locked and can only be amended (the original is kept).</p>
+  </form>
+  <% } %>
+  <section class="<%= can('clinical.write') ? '' : 'span2' %>">
+    <% if (!notes.length) { %><div class="card"><p class="muted">No clinical notes yet.</p></div><% } %>
+    <% notes.forEach(function(n){ %>
+    <article class="card note <%= n.is_locked ? 'locked' : 'draft' %>">
+      <header><strong><%= n.note_type.replace('_',' ') %></strong><% if (n.pain_score != null) { %> · pain <%= n.pain_score %>/10<% } %><span class="muted"> · <%= n.author %> · <%= n.created_at %></span> <%= n.is_locked ? '🔒 signed' : '✎ draft' %><% if (n.amended_from) { %> · <em>amends #<%= n.amended_from %></em><% } %></header>
+      <% if (n.is_locked || n.author_id !== user.id) { %>
+        <% [['S','subjective'],['O','objective'],['A','assessment'],['P','plan']].forEach(function(k){ if (n[k[1]]) { %><p><b><%= k[0] %>:</b> <span class="pre"><%= n[k[1]] %></span></p><% } }) %>
+        <% if (n.is_locked && can('clinical.write')) { %>
+          <details><summary>Add amendment</summary><form method="post" action="/admin/patients/<%= p.id %>/notes" class="form"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="amended_from" value="<%= n.id %>"><input type="hidden" name="note_type" value="<%= n.note_type %>">
+            <% ['subjective','objective','assessment','plan'].forEach(function(k){ %><label><%= k %><textarea name="<%= k %>" rows="2"><%= n[k] || '' %></textarea></label><% }) %><button class="btn btn-sm btn-primary" name="sign" value="1">Save amendment</button></form></details>
+        <% } %>
+      <% } else { %>
+        <form method="post" action="/admin/patients/notes/<%= n.id %>/edit" class="form"><input type="hidden" name="_csrf" value="<%= csrf %>">
+          <% ['subjective','objective','assessment','plan'].forEach(function(k){ %><label><%= k %><textarea name="<%= k %>" rows="2"><%= n[k] || '' %></textarea></label><% }) %>
+          <div class="btn-row"><button class="btn btn-sm btn-ghost" name="sign" value="0">Update draft</button><button class="btn btn-sm btn-primary" name="sign" value="1">Sign</button></div></form>
+      <% } %>
+    </article>
+    <% }) %>
+  </section>
+</div>
+<% } %>
+
+<% if (tab === 'billing' && invoices) { %>
+<div class="card"><table class="table"><thead><tr><th>Invoice</th><th>Date</th><th class="num">Total</th><th class="num">Paid</th><th class="num">Balance</th><th>Status</th></tr></thead><tbody>
+<% if (!invoices.length) { %><tr><td colspan="6" class="muted">No invoices.</td></tr><% } %>
+<% invoices.forEach(function(i){ %><tr><td><a href="/admin/invoices/<%= i.id %>"><%= i.invoice_no %></a></td><td><%= i.issue_date %></td><td class="num"><%= u.money(i.total) %></td><td class="num"><%= u.money(i.amount_paid) %></td><td class="num"><%= i.status === 'void' ? '—' : u.money(i.total - i.amount_paid) %></td><td><span class="badge badge-<%= i.status %>"><%= i.status %></span></td></tr><% }) %>
+</tbody></table></div>
+<% } %>

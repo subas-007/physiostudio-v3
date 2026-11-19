@@ -1,0 +1,14 @@
+<div class="page-head"><h1>Two-factor authentication</h1></div>
+<% if (enabled) { %>
+<div class="card"><p>✓ Two-factor authentication is on for your account.</p>
+<% if (s.require_staff_2fa !== '1') { %><form method="post" action="/admin/account/2fa/disable" class="form inline-form"><input type="hidden" name="_csrf" value="<%= csrf %>"><label>Password<input type="password" name="current" required></label><button class="btn btn-danger btn-sm">Turn off</button></form>
+<% } else { %><p class="small muted">2FA is mandatory for staff. If you change phones, ask an administrator to reset it.</p><% } %></div>
+<% } else { %>
+<div class="card twofa">
+  <% if (required) { %><div class="alert alert-info">Two-factor authentication is required for all staff accounts. Set it up to continue.</div><% } %>
+  <ol><li>Install an authenticator app (Google Authenticator, Microsoft Authenticator or Authy).</li><li>Scan this QR code, or enter the key manually.</li><li>Enter the 6-digit code to confirm.</li></ol>
+  <img src="<%= qr %>" alt="QR code for authenticator app" width="220" height="220">
+  <p>Manual key: <code class="secret"><%= secret.match(/.{1,4}/g).join(' ') %></code></p>
+  <form method="post" action="/admin/account/2fa/enable" class="form inline-form"><input type="hidden" name="_csrf" value="<%= csrf %>"><label>6-digit code<input name="code" inputmode="numeric" autocomplete="one-time-code" required pattern="[0-9 ]{6,7}" class="code-input"></label><button class="btn btn-primary">Turn on 2FA</button></form>
+</div>
+<% } %>

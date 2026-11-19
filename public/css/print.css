@@ -1,0 +1,28 @@
+body.print-doc { font-family: 'Segoe UI', Arial, sans-serif; color: #1c2b28; max-width: 800px; margin: 0 auto; padding: 28px; font-size: 14px; line-height: 1.5; }
+.bar { display: flex; justify-content: space-between; margin-bottom: 20px; padding: 10px; background: #f3f8f6; border-radius: 8px; }
+.bar button { background: #0e7c6b; color: #fff; border: 0; border-radius: 6px; padding: 8px 14px; cursor: pointer; font-weight: 600; }
+.doc-head { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid #0e7c6b; padding-bottom: 14px; margin-bottom: 18px; gap: 20px; }
+.doc-head h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: .04em; color: #0e7c6b; }
+.doc-head .right { text-align: right; }
+.doc-head p { margin: 0; }
+.parties { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 18px; }
+.parties h4, h4 { margin: 0 0 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: #6b7f7b; }
+.parties p { margin: 0; }
+table.lines { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+table.lines th { background: #f3f8f6; text-align: left; padding: 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+table.lines td { padding: 8px; border-bottom: 1px solid #e3ece9; }
+table.lines tfoot td { border: 0; padding: 4px 8px; }
+table.lines tr.grand td { font-weight: 700; font-size: 15px; border-top: 2px solid #1c2b28; }
+table.lines.small td { font-size: 12px; padding: 4px 8px; }
+table.kv { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+table.kv th { text-align: left; width: 120px; color: #6b7f7b; font-weight: 600; padding: 4px 8px 4px 0; vertical-align: top; }
+table.kv td { padding: 4px 8px 4px 0; }
+.num { text-align: right; }
+.void { background: #fdecea; color: #8a2a1c; padding: 10px; font-weight: 700; text-align: center; border-radius: 6px; }
+.confidential { background: #fff4e5; padding: 8px 10px; border-radius: 6px; font-size: 12px; }
+.note { border-left: 3px solid #0e7c6b; padding-left: 12px; margin-bottom: 14px; page-break-inside: avoid; }
+.note h3 { font-size: 14px; margin: 0 0 4px; text-transform: capitalize; }
+.note p { margin: 2px 0; }
+.doc-foot { margin-top: 30px; border-top: 1px solid #e3ece9; padding-top: 10px; font-size: 12px; color: #6b7f7b; }
+.small { font-size: 11px; }
+@media print { .no-print { display: none !important; } body.print-doc { padding: 0; } @page { margin: 14mm; } }

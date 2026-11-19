@@ -1,0 +1,7 @@
+<header class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Home exercises</nav><h1><%= c['exercises.title'] %></h1><p class="lede"><%= c['exercises.text'] %></p></div></header>
+<section class="band band-tight"><div class="wrap">
+  <% if (areas.length > 1) { %><nav class="filter" aria-label="Filter by body area"><a href="/exercises" <%- !area ? 'aria-current="page"' : '' %>>All</a><% areas.forEach(function(a){ %><a href="/exercises?area=<%= a.id %>" <%- area === a.id ? 'aria-current="page"' : '' %>><%= a.title.replace(/ Pain$/, '') %></a><% }) %></nav><% } %>
+  <% if (!videos.length) { %><p class="empty">No videos here yet. Your physiotherapist can show you exercises at your next visit.</p><% } %>
+  <div class="video-grid"><% videos.forEach(function(v){ %><%- include('../partials/video', { v }) %><% }) %></div>
+  <p class="hint">Videos play from YouTube in privacy-enhanced mode and only load when you press play.</p>
+</div></section>

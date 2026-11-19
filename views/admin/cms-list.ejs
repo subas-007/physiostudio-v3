@@ -1,0 +1,6 @@
+<div class="page-head"><div><p class="eyebrow"><a href="/admin/cms">Website</a></p><h1><%= e.label %></h1></div><div class="actions"><a class="btn btn-primary" href="/admin/cms/<%= ekey %>/new">+ Add <%= e.singular %></a></div></div>
+<div class="card"><table class="table"><thead><tr><% e.list.forEach(function(c){ %><th><%= c.replace(/_/g,' ').replace(/^is /,'') %></th><% }) %><th></th></tr></thead><tbody>
+<% if (!rows.length) { %><tr><td colspan="<%= e.list.length + 1 %>" class="muted">Nothing yet.</td></tr><% } %>
+<% rows.forEach(function(r){ %><tr><% e.list.forEach(function(c, i){ const v = r[c]; %><td><% if (i === 0) { %><a href="/admin/cms/<%= ekey %>/<%= r.id %>"><strong><%= v %></strong></a><% } else if (c.indexOf('is_') === 0) { %><%= v ? '✓' : '—' %><% } else if (c === 'price') { %><%= v == null ? 'on request' : u.money(v) %><% } else { %><%= v == null ? '' : v %><% } %></td><% }) %>
+  <td class="row-actions"><% if (e.publicUrl) { %><a href="<%= e.publicUrl(r) %>" target="_blank">View ↗</a><% } %> <a href="/admin/cms/<%= ekey %>/<%= r.id %>">Edit</a></td></tr><% }) %>
+</tbody></table></div>

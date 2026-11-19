@@ -1,0 +1,11 @@
+<div class="page-head"><h1>My account</h1></div>
+<% if (force || me.must_change_password) { %><div class="alert alert-info">Please choose a new password before continuing.</div><% } %>
+<div class="grid2">
+<form method="post" action="/admin/account/password" class="card form"><h2>Change password</h2><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <label>Current password<input type="password" name="current" required autocomplete="current-password"></label>
+  <label>New password<input type="password" name="password" required minlength="10" maxlength="128" autocomplete="new-password"></label>
+  <label>Confirm new password<input type="password" name="password2" required minlength="10" maxlength="128" autocomplete="new-password"></label>
+  <p class="small muted">10+ characters, 3 of: lowercase, uppercase, number, symbol.</p><button class="btn btn-primary">Update password</button></form>
+<section class="card"><h2>Two-factor authentication</h2><p><%= me.totp_enabled ? '✓ Enabled' : 'Not enabled' %></p><a class="btn btn-ghost" href="/admin/account/2fa"><%= me.totp_enabled ? 'Manage' : 'Set up 2FA' %></a>
+  <dl class="kv"><dt>Email</dt><dd><%= me.email %></dd><dt>Role</dt><dd><%= me.role %></dd><dt>Last login</dt><dd><%= me.last_login_at %></dd></dl></section>
+</div>

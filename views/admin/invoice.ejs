@@ -1,0 +1,35 @@
+<div class="page-head"><div><p class="eyebrow">Invoice</p><h1><%= inv.invoice_no %></h1><p class="muted"><a href="/admin/patients/<%= inv.patient_id %>"><%= inv.patient_name %></a> (<%= inv.patient_code %>) · issued <%= inv.issue_date %> by <%= inv.created_by_name %></p></div>
+  <div class="actions"><span class="badge badge-<%= inv.status %> big"><%= inv.status %></span><a class="btn btn-ghost" href="/admin/invoices/<%= inv.id %>/print" target="_blank">Print / PDF</a></div></div>
+<div class="grid2">
+  <section class="card span2">
+    <table class="table"><thead><tr><th>Description</th><th class="num">Qty</th><th class="num">Unit</th><th class="num">Amount</th></tr></thead><tbody>
+      <% inv.items.forEach(function(it){ %><tr><td><%= it.description %></td><td class="num"><%= it.qty %></td><td class="num"><%= u.money(it.unit_price) %></td><td class="num"><%= u.money(it.line_total) %></td></tr><% }) %>
+    </tbody><tfoot>
+      <tr><td colspan="3" class="num">Subtotal</td><td class="num"><%= u.money(inv.subtotal) %></td></tr>
+      <% if (inv.discount > 0) { %><tr><td colspan="3" class="num">Discount</td><td class="num">− <%= u.money(inv.discount) %></td></tr><% } %>
+      <% if (inv.tax_amount > 0) { %><tr><td colspan="3" class="num"><%= s.tax_label %> <%= inv.tax_rate %>%</td><td class="num"><%= u.money(inv.tax_amount) %></td></tr><% } %>
+      <tr class="grand"><td colspan="3" class="num">Total</td><td class="num"><%= u.money(inv.total) %></td></tr>
+      <tr><td colspan="3" class="num">Paid</td><td class="num"><%= u.money(inv.amount_paid) %></td></tr>
+      <tr class="grand"><td colspan="3" class="num">Balance due</td><td class="num"><%= inv.status === 'void' ? '—' : u.money(inv.balance) %></td></tr>
+    </tfoot></table>
+    <% if (inv.notes) { %><p class="muted"><%= inv.notes %></p><% } %>
+    <% if (inv.status === 'void') { %><p class="alert alert-error">Voided: <%= inv.void_reason %></p><% } %>
+  </section>
+  <section class="card">
+    <h2>Payments</h2>
+    <% if (!inv.payments.length) { %><p class="muted">No payments yet.</p><% } else { %>
+    <table class="table compact"><tbody><% inv.payments.forEach(function(p){ %><tr><td><%= p.receipt_no %><br><small class="muted"><%= p.paid_at %></small></td><td><%= p.method %><% if (p.reference) { %><br><small class="muted"><%= p.reference %></small><% } %></td><td class="num"><%= u.money(p.amount) %></td><td><small><%= p.received_by_name %></small></td></tr><% }) %></tbody></table><% } %>
+    <% if (can('invoices.manage') && ['unpaid','partial'].includes(inv.status)) { %>
+    <form method="post" action="/admin/invoices/<%= inv.id %>/pay" class="form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="row3"><label>Amount<input type="number" name="amount" min="0.01" step="0.01" max="<%= inv.balance %>" value="<%= inv.balance %>" required></label>
+        <label>Method<select name="method"><% METHODS.forEach(function(m){ %><option><%= m %></option><% }) %></select></label>
+        <label>Reference<input name="reference" maxlength="100"></label></div>
+      <button class="btn btn-primary">Record payment</button>
+    </form><% } %>
+  </section>
+  <% if (can('invoices.void') && inv.status !== 'void' && inv.amount_paid === 0) { %>
+  <section class="card"><h2>Void invoice</h2><p class="small muted">Issued invoices are never edited or deleted. Void it with a reason and create a corrected one.</p>
+    <form method="post" action="/admin/invoices/<%= inv.id %>/void" class="form" data-confirm="Void this invoice? This cannot be undone."><input type="hidden" name="_csrf" value="<%= csrf %>"><label>Reason<input name="reason" required maxlength="300"></label><button class="btn btn-danger btn-sm">Void invoice</button></form></section>
+  <% } %>
+</div>

@@ -1,0 +1,57 @@
+<header class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Book</nav><h1>Book an appointment</h1><p class="lede">Choose a treatment and a time. You will get a confirmation straight away, and reminders the day before and two hours before.</p></div></header>
+<section class="band band-tight"><div class="wrap book">
+  <form method="post" action="/book" class="panel form booking" data-booking>
+    <%- include('../partials/flash', { flashes: [] }) %>
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <% if (f.package_id) { %><input type="hidden" name="package_id" value="<%= f.package_id %>"><p class="note">You are starting the <strong><%= f.package_title %></strong> care plan. Your first visit is an assessment; we will confirm the plan with you there.</p><% } %>
+    <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+
+    <fieldset><legend><span class="step">1</span> Treatment and therapist</legend>
+      <div class="row2">
+        <label>Service<select name="service_id" required data-service>
+          <option value="">Choose a service…</option>
+          <% services.forEach(function(sv){ %><option value="<%= sv.id %>" <%= String(f.service_id) === String(sv.id) ? 'selected' : '' %>><%= sv.title %> (<%= sv.duration_min %> min)</option><% }) %>
+        </select></label>
+        <label>Therapist<select name="staff_id" data-staff>
+          <option value="">Any available therapist</option>
+          <% staff.forEach(function(m){ %><option value="<%= m.id %>" <%= String(f.staff_id) === String(m.id) ? 'selected' : '' %>><%= m.full_name %></option><% }) %>
+        </select></label>
+      </div>
+    </fieldset>
+
+    <fieldset><legend><span class="step">2</span> Date and time</legend>
+      <label>Date<input type="date" name="date" required min="<%= minDate %>" max="<%= maxDate %>" value="<%= f.date || '' %>" data-date></label>
+      <input type="hidden" name="time" value="<%= f.time || '' %>" data-time required>
+      <div class="slots" data-slots aria-live="polite"><p class="hint">Choose a treatment and a date to see free times.</p></div>
+    </fieldset>
+
+    <fieldset><legend><span class="step">3</span> Your details</legend>
+      <% if (patient) { %>
+        <p>Booking as <strong><%= patient.full_name %></strong>, <%= patient.phone %>. <a href="/portal/profile">Update your details</a></p>
+      <% } else { %>
+        <div class="row2">
+          <label>Full name<input name="full_name" required maxlength="120" value="<%= f.full_name || '' %>" autocomplete="name"></label>
+          <label>Mobile number<input type="tel" name="phone" required maxlength="20" value="<%= f.phone || '' %>" placeholder="98XXXXXXXX" autocomplete="tel"></label>
+        </div>
+        <div class="row2">
+          <label><span>Email <span class="optional">For your confirmation</span></span><input type="email" name="email" maxlength="190" value="<%= f.email || '' %>" autocomplete="email"></label>
+          <label><span>WhatsApp number <span class="optional">If different</span></span><input type="tel" name="whatsapp" maxlength="20" value="<%= f.whatsapp || '' %>"></label>
+        </div>
+        <label>Gender<select name="gender"><option value="">Prefer not to say</option><% ['Female','Male','Other'].forEach(function(g){ %><option <%= f.gender === g ? 'selected' : '' %>><%= g %></option><% }) %></select></label>
+      <% } %>
+      <label><span>What brings you in? <span class="optional">Optional</span></span><textarea name="complaint" rows="3" maxlength="1000" placeholder="e.g. lower back pain for 3 weeks"><%= f.complaint || '' %></textarea></label>
+      <% if (!patient) { %>
+        <label class="check"><input type="checkbox" name="consent" value="1" required> I agree to the <a href="/privacy" target="_blank">privacy notice</a> and consent to my information being stored for my care.</label>
+        <label class="check"><input type="checkbox" name="consent_reminders" value="1" checked> Send me confirmation and reminders by email/WhatsApp.</label>
+      <% } %>
+    </fieldset>
+    <button class="btn btn-primary btn-lg btn-block" data-submit>Book appointment</button>
+    <% if (!user) { %><p class="hint">Visited us before? <a href="/login">Sign in</a> to book faster and manage your appointments.</p><% } %>
+  </form>
+  <aside class="aside">
+    <h2>Good to know</h2>
+    <ul class="ticks"><li>A first assessment takes about 60 minutes; follow-ups about 45.</li><li>Wear comfortable clothing and bring any reports or scans.</li><li>Reschedule or cancel online up to <%= s.cancel_cutoff_hours %> hours before.</li><li>You'll get reminders the day before and 2 hours before.</li></ul>
+    <h2>Rather call?</h2><p><a href="tel:<%= s.phone_primary %>" class="btn btn-line btn-block"><%= s.phone_primary %></a></p>
+    <p class="hint"><%= s.hours_text %></p>
+  </aside>
+</div></section>

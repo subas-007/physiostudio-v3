@@ -1,0 +1,29 @@
+<a class="skip" href="#main">Skip to content</a>
+<% if (typeof announcement !== 'undefined' && announcement) { %>
+<div class="announce" data-announce>
+  <div class="wrap announce-inner">
+    <p><%= announcement.text %><% if (announcement.link) { %> <a href="<%= announcement.link %>">See details</a><% } %></p>
+    <button type="button" class="announce-close" data-announce-close aria-label="Dismiss announcement">×</button>
+  </div>
+</div>
+<% } %>
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <a href="/" class="brand"><img src="<%= s.logo %>" alt="<%= s.clinic_name %>" height="44"></a>
+    <nav id="mainnav" class="nav" aria-label="Main">
+      <% [['/about', 'About'], ['/services', 'Services'], ['/packages', 'Care plans'], ['/team', 'Our team'], ['/blog', 'Blog'], ['/contact', 'Contact']].forEach(function(l){ %>
+        <a href="<%= l[0] %>" <%- path.indexOf(l[0]) === 0 ? 'aria-current="page"' : '' %>><%= l[1] %></a>
+      <% }) %>
+      <% if (typeof hasVideos !== 'undefined' && hasVideos) { %><a href="/exercises" <%- path.indexOf('/exercises') === 0 ? 'aria-current="page"' : '' %>>Exercises</a><% } %>
+      <span class="nav-account">
+        <% if (user && user.role === 'patient') { %><a href="/portal">My appointments</a>
+        <% } else if (!user) { %><a href="/login">Sign in</a><% } %>
+      </span>
+    </nav>
+    <div class="masthead-actions">
+      <% if (typeof clinicStatus !== 'undefined' && clinicStatus) { %><span class="status <%= clinicStatus.open ? 'is-open' : '' %>"><%= clinicStatus.text %></span><% } %>
+      <a href="/book" class="btn btn-primary">Book a visit</a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="mainnav" data-nav-toggle><span class="sr-only">Menu</span><i></i><i></i></button>
+    </div>
+  </div>
+</header>

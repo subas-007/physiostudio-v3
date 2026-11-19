@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title><%= title %> · <%= s.clinic_name %></title><link rel="stylesheet" href="/static/css/print.css"></head>
+<body class="print-doc">
+<div class="no-print bar"><a href="<%= backUrl %>">← Back</a><button data-print>Print / Save as PDF</button></div>
+<header class="doc-head">
+  <img src="<%= s.logo %>" alt="" height="56">
+  <div class="right"><h1><%= inv.status === 'paid' ? 'TAX INVOICE / RECEIPT' : 'INVOICE' %></h1><p><strong><%= inv.invoice_no %></strong><br>Date: <%= inv.issue_date %><% if (inv.due_date) { %><br>Due: <%= inv.due_date %><% } %></p></div>
+</header>
+<div class="parties">
+  <div><h4>From</h4><p><strong><%= s.clinic_name %></strong><br><%= s.address %><br><%= s.phone_primary %> · <%= s.email %><% if (s.pan_vat_no) { %><br>PAN/VAT: <%= s.pan_vat_no %><% } %></p></div>
+  <div><h4>Bill to</h4><p><strong><%= inv.patient_name %></strong><br>Patient ID: <%= inv.patient_code %><br><%= inv.patient_phone %><% if (inv.patient_address) { %><br><%= inv.patient_address %><% } %></p></div>
+</div>
+<% if (inv.status === 'void') { %><p class="void">VOID – <%= inv.void_reason %></p><% } %>
+<table class="lines"><thead><tr><th>#</th><th>Description</th><th class="num">Qty</th><th class="num">Rate</th><th class="num">Amount</th></tr></thead><tbody>
+<% inv.items.forEach(function(it, i){ %><tr><td><%= i+1 %></td><td><%= it.description %></td><td class="num"><%= it.qty %></td><td class="num"><%= u.money(it.unit_price) %></td><td class="num"><%= u.money(it.line_total) %></td></tr><% }) %>
+</tbody><tfoot>
+<tr><td colspan="4" class="num">Subtotal</td><td class="num"><%= u.money(inv.subtotal) %></td></tr>
+<% if (inv.discount > 0) { %><tr><td colspan="4" class="num">Discount</td><td class="num">− <%= u.money(inv.discount) %></td></tr><% } %>
+<% if (inv.tax_amount > 0) { %><tr><td colspan="4" class="num"><%= s.tax_label %> <%= inv.tax_rate %>%</td><td class="num"><%= u.money(inv.tax_amount) %></td></tr><% } %>
+<tr class="grand"><td colspan="4" class="num">Total</td><td class="num"><%= u.money(inv.total) %></td></tr>
+<tr><td colspan="4" class="num">Paid</td><td class="num"><%= u.money(inv.amount_paid) %></td></tr>
+<tr class="grand"><td colspan="4" class="num">Balance due</td><td class="num"><%= u.money(inv.balance) %></td></tr>
+</tfoot></table>
+<% if (inv.payments.length) { %><h4>Payments received</h4><table class="lines small"><tbody><% inv.payments.forEach(function(p){ %><tr><td><%= p.receipt_no %></td><td><%= p.paid_at %></td><td><%= p.method %> <%= p.reference || '' %></td><td class="num"><%= u.money(p.amount) %></td></tr><% }) %></tbody></table><% } %>
+<% if (inv.notes) { %><p><%= inv.notes %></p><% } %>
+<footer class="doc-foot"><p><%= s.invoice_footer %></p><p class="small">Computer-generated document. Fiscal year <%= fiscalYear(inv.issue_date) %>.</p></footer>
+<script src="/static/js/print.js"></script>
+</body></html>

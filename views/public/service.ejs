@@ -1,0 +1,14 @@
+<header class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/services">Services</a></nav><h1><%= svc.title %></h1><p class="lede"><%= svc.summary %></p></div></header>
+<section class="band band-tight"><div class="wrap detail">
+  <article>
+    <% if (svc.image) { %><img class="detail-img" src="<%= svc.image %>" alt="" width="820" height="480"><% } %>
+    <div class="prose"><%- bodyHtml %></div>
+  </article>
+  <aside class="aside">
+    <h2>Book this treatment</h2>
+    <p>Sessions take about <%= svc.duration_min %> minutes.</p>
+    <a href="/book?service=<%= svc.id %>" class="btn btn-primary btn-block">Choose a time</a>
+    <a href="tel:<%= s.phone_primary %>" class="btn btn-line btn-block">Call <%= s.phone_primary %></a>
+    <% if (others.length) { %><h3>Other treatments</h3><ul class="plain-list"><% others.forEach(function(o){ %><li><a href="/services/<%= o.slug %>"><%= o.title %></a></li><% }) %></ul><% } %>
+  </aside>
+</div></section>

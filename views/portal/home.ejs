@@ -1,0 +1,32 @@
+<div class="portal-grid">
+  <section class="card">
+    <h2>Upcoming appointments</h2>
+    <% if (!upcoming.length) { %><p class="muted">No upcoming appointments. <a href="/book">Book one now</a>.</p><% } %>
+    <% upcoming.forEach(function(a){ %>
+      <div class="appt-row">
+        <div class="appt-date"><strong><%= new Date(a.date+'T00:00:00').getDate() %></strong><span><%= new Date(a.date+'T00:00:00').toLocaleString('en-GB',{month:'short'}) %></span></div>
+        <div class="appt-info"><strong><%= u.fmtTime(a.start_time) %> · <%= a.service_title %></strong><br><span class="muted">with <%= a.staff_name %> · Ref <%= a.ref %></span><br><span class="badge badge-<%= a.status %>"><%= a.status.replace('_',' ') %></span></div>
+        <div class="appt-actions">
+          <% if (a.canChange) { %>
+            <a class="btn btn-ghost btn-sm" href="/portal/appointments/<%= a.id %>/reschedule">Reschedule</a>
+            <form method="post" action="/portal/appointments/<%= a.id %>/cancel" data-confirm="Cancel this appointment?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-danger-ghost btn-sm">Cancel</button></form>
+          <% } else { %><small class="muted">Call to change</small><% } %>
+        </div>
+      </div>
+    <% }) %>
+  </section>
+  <section class="card">
+    <h2>Invoices</h2>
+    <% if (!invoices.length) { %><p class="muted">No invoices yet.</p><% } else { %>
+    <table class="table"><thead><tr><th>No.</th><th>Date</th><th class="num">Total</th><th>Status</th><th></th></tr></thead><tbody>
+      <% invoices.forEach(function(i){ %><tr><td><%= i.invoice_no %></td><td><%= i.issue_date %></td><td class="num"><%= u.money(i.total) %></td><td><span class="badge badge-<%= i.status %>"><%= i.status %></span></td><td><a href="/portal/invoices/<%= i.id %>">View</a></td></tr><% }) %>
+    </tbody></table><% } %>
+  </section>
+  <section class="card span2">
+    <h2>Past visits</h2>
+    <% if (!past.length) { %><p class="muted">Nothing here yet.</p><% } else { %>
+    <table class="table"><thead><tr><th>Date</th><th>Time</th><th>Service</th><th>Therapist</th><th>Status</th></tr></thead><tbody>
+      <% past.forEach(function(a){ %><tr><td><%= u.fmtDate(a.date) %></td><td><%= u.fmtTime(a.start_time) %></td><td><%= a.service_title %></td><td><%= a.staff_name %></td><td><span class="badge badge-<%= a.status %>"><%= a.status.replace('_',' ') %></span></td></tr><% }) %>
+    </tbody></table><% } %>
+  </section>
+</div>

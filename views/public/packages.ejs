@@ -1,0 +1,21 @@
+<header class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Care plans</nav><h1><%= c['packages.title'] %></h1><p class="lede"><%= c['packages.text'] %></p></div></header>
+<section class="band band-tight band-pine"><div class="wrap">
+  <% if (!packages.length) { %><p class="empty">Care plans are coming soon. <a href="/contact">Ask us</a> about options.</p><% } %>
+  <div class="plans">
+    <% packages.forEach(function(p){ %>
+    <article class="plan <%= p.is_featured ? 'plan-featured' : '' %>">
+      <% if (p.badge) { %><p class="plan-badge"><%= p.badge %></p><% } %>
+      <h2><%= p.title %></h2>
+      <% if (p.audience) { %><p class="plan-for"><%= p.audience %></p><% } %>
+      <p class="plan-price"><% if (p.price != null) { %><strong><%= u.money(p.price).replace('.00','') %></strong> <span><%= p.price_unit %></span><% } else { %><strong>Ask us</strong> <span><%= p.price_unit %></span><% } %></p>
+      <% if (p.summary) { %><p><%= p.summary %></p><% } %>
+      <% if (p.featureList.length) { %><ul><% p.featureList.forEach(function(x){ %><li><%= x %></li><% }) %></ul><% } %>
+      <a class="btn <%= p.is_featured ? 'btn-marigold' : 'btn-line-light' %>" href="/book?package=<%= p.id %>">Start this plan</a>
+    </article>
+    <% }) %>
+  </div>
+</div></section>
+<section class="band"><div class="wrap ask">
+  <div class="prose"><h2>Not sure which plan fits?</h2><p>Book a single assessment first. Your physiotherapist will recommend a plan once they understand what is going on, and the assessment fee can be adjusted against the plan.</p><p><a class="btn btn-primary" href="/book">Book an assessment</a></p></div>
+  <%- include('../partials/callback') %>
+</div></section>

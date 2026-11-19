@@ -1,0 +1,36 @@
+<div class="page-head"><h1>New appointment</h1></div>
+<form method="post" action="/admin/appointments/new" class="card form" data-booking data-admin>
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <fieldset><legend>Patient</legend>
+    <div class="patient-picker" data-patient-picker>
+      <input type="hidden" name="patient_id" value="<%= patient ? patient.id : (f.patient_id || '') %>" data-patient-id>
+      <div class="picked" data-picked <%= patient ? '' : 'hidden' %>><span data-picked-label><%= patient ? patient.full_name + ' · ' + patient.patient_code + ' · ' + patient.phone : '' %></span> <button type="button" class="linklike" data-clear>change</button></div>
+      <div data-search-wrap <%= patient ? 'hidden' : '' %>>
+        <label>Find existing patient<input type="search" data-patient-search placeholder="Type name, phone or patient ID…" autocomplete="off"></label>
+        <ul class="ac-list" data-ac hidden></ul>
+        <p class="small muted">…or register a new patient quickly:</p>
+        <div class="row3"><label>Full name<input name="full_name" value="<%= f.full_name || '' %>" maxlength="120"></label><label>Mobile<input name="phone" type="tel" value="<%= f.phone || '' %>" maxlength="20"></label><label>Email<input name="email" type="email" value="<%= f.email || '' %>" maxlength="190"></label></div>
+      </div>
+    </div>
+  </fieldset>
+  <fieldset><legend>Booking</legend>
+    <div class="row3">
+      <label>Service<select name="service_id" required data-service><option value="">Choose…</option><% services.forEach(function(sv){ %><option value="<%= sv.id %>" <%= String(f.service_id) === String(sv.id) ? 'selected' : '' %>><%= sv.title %> (<%= sv.duration_min %>m)</option><% }) %></select></label>
+      <label>Therapist<select name="staff_id" data-staff><option value="">Any available</option><% staffList.forEach(function(m){ %><option value="<%= m.id %>" <%= String(f.staff_id) === String(m.id) ? 'selected' : '' %>><%= m.full_name %></option><% }) %></select></label>
+      <label>Source<select name="source"><option value="phone">Phone</option><option value="walk_in">Walk-in</option><option value="admin">Other</option></select></label>
+    </div>
+    <label>Date<input type="date" name="date" required value="<%= f.date %>" data-date></label>
+    <input type="hidden" name="time" value="<%= f.time || '' %>" data-time>
+    <div class="slots" data-slots aria-live="polite"></div>
+    <% if (['admin','receptionist'].includes(user.role)) { %>
+    <details class="override"><summary>Override availability (double-book / outside hours)</summary>
+      <label class="check"><input type="checkbox" name="override" value="1" data-override> Allow any time – I've checked with the therapist</label>
+      <label>Time (HH:MM)<input type="time" data-override-time step="300"></label>
+      <p class="small muted">Requires a therapist to be selected. Overrides are recorded in the audit log.</p>
+    </details>
+    <% } %>
+    <label>Complaint / notes<textarea name="complaint" rows="2" maxlength="1000"><%= f.complaint || '' %></textarea></label>
+    <label class="check"><input type="checkbox" name="notify" value="1" checked> Send confirmation to patient (email / WhatsApp)</label>
+  </fieldset>
+  <button class="btn btn-primary" data-submit>Book appointment</button>
+</form>

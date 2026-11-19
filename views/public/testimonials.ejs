@@ -1,0 +1,8 @@
+<header class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Patient stories</nav><h1>Patient stories</h1><% if (s.google_reviews_url) { %><p class="lede"><a href="<%= s.google_reviews_url %>" target="_blank" rel="noopener">Read our reviews on Google</a></p><% } %></div></header>
+<section class="band band-tight"><div class="wrap">
+  <% if (!testimonials.length) { %><p class="empty">Patient stories will appear here soon. <a href="/book">Book a visit</a> and be one of them.</p><% } %>
+  <div class="story-grid"><% testimonials.forEach(function(t){ %>
+    <figure class="story" id="story-<%= t.id %>"><% if (t.rating) { %><p class="stars" aria-label="<%= t.rating %> out of 5 stars"><%= '★'.repeat(t.rating) %><span><%= '★'.repeat(5 - t.rating) %></span></p><% } %><blockquote><%= t.body %></blockquote>
+      <figcaption><% if (t.photo) { %><img src="<%= t.photo %>" alt="" width="44" height="44" loading="lazy"><% } %><span><strong><%= t.name %></strong><% if (t.role) { %><br><%= t.role %><% } %></span></figcaption></figure>
+  <% }) %></div>
+</div></section>

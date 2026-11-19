@@ -1,0 +1,11 @@
+<div class="page-head"><h1>Invoices</h1><div class="actions"><% if (can('invoices.manage')) { %><a class="btn btn-primary" href="/admin/invoices/new">+ New invoice</a><% } %></div></div>
+<form method="get" class="filters card">
+  <label>Status<select name="status"><option value="">All</option><% ['unpaid','partial','paid','void'].forEach(function(st){ %><option <%= f.status === st ? 'selected' : '' %>><%= st %></option><% }) %></select></label>
+  <label>From<input type="date" name="from" value="<%= f.from %>"></label><label>To<input type="date" name="to" value="<%= f.to %>"></label>
+  <label>Search<input type="search" name="q" value="<%= f.q %>" placeholder="Invoice no, patient, phone"></label><button class="btn btn-ghost">Filter</button>
+</form>
+<div class="kpis small"><div class="kpi"><span>Billed (filtered)</span><strong><%= u.money(sums.billed) %></strong></div><div class="kpi"><span>Paid</span><strong><%= u.money(sums.paid) %></strong></div><div class="kpi warn"><span>Balance</span><strong><%= u.money(sums.billed - sums.paid) %></strong></div></div>
+<div class="card"><table class="table"><thead><tr><th>Invoice</th><th>Date</th><th>Patient</th><th class="num">Total</th><th class="num">Paid</th><th>Status</th></tr></thead><tbody>
+<% if (!rows.length) { %><tr><td colspan="6" class="muted">No invoices.</td></tr><% } %>
+<% rows.forEach(function(i){ %><tr><td><a href="/admin/invoices/<%= i.id %>"><%= i.invoice_no %></a></td><td><%= i.issue_date %></td><td><a href="/admin/patients/<%= i.patient_id %>"><%= i.patient_name %></a> <small class="muted"><%= i.patient_code %></small></td><td class="num"><%= u.money(i.total) %></td><td class="num"><%= u.money(i.amount_paid) %></td><td><span class="badge badge-<%= i.status %>"><%= i.status %></span></td></tr><% }) %>
+</tbody></table><%- include('../partials/pager', { pg, query: f }) %></div>

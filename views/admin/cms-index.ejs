@@ -1,0 +1,8 @@
+<div class="page-head"><h1>Website content</h1><div class="actions"><a class="btn btn-ghost" href="/" target="_blank">View website ↗</a></div></div>
+<div class="tiles">
+  <a class="tile" href="/admin/cms/slides"><strong>Home page slider</strong><span>Photos, headlines and buttons in the main slider</span></a>
+  <a class="tile" href="/admin/cms/content"><strong>Page text &amp; images</strong><span>Home hero, body map, first-visit steps, about, founder's message, mission &amp; vision</span></a>
+  <% Object.keys(ENTITIES).filter(k => k !== 'slides').forEach(function(k){ %><a class="tile" href="/admin/cms/<%= k %>"><strong><%= ENTITIES[k].label %></strong><span><%= counts[k] %> item(s)</span></a><% }) %>
+  <a class="tile" href="/admin/cms/media"><strong>Media library</strong><span>Upload and reuse images</span></a>
+  <% if (can('settings.manage')) { %><a class="tile" href="/admin/settings"><strong>Contact details &amp; branding</strong><span>Phone, address, hours, logo, colours, social links</span></a><% } %>
+</div>

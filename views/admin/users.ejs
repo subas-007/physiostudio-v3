@@ -1,0 +1,7 @@
+<div class="page-head"><div><h1>Staff users</h1><p class="muted"><%= patientAccounts %> patient portal accounts are managed from each patient's record.</p></div><div class="actions"><a class="btn btn-primary" href="/admin/users/new">+ Add staff user</a></div></div>
+<div class="card"><table class="table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Therapist profile</th><th>2FA</th><th>Last login</th><th>Status</th></tr></thead><tbody>
+<% rows.forEach(function(r){ %><tr class="<%= r.is_active ? '' : 'dim' %>"><td><a href="/admin/users/<%= r.id %>"><strong><%= r.full_name %></strong></a></td><td><%= r.email %></td><td><span class="badge"><%= r.role %></span></td><td><%= r.staff_profile || '—' %></td><td><%= r.totp_enabled ? '✓' : '✗' %></td><td><%= r.last_login_at || 'never' %></td><td><%= r.is_active ? (r.locked_until ? 'locked' : 'active') : 'disabled' %></td></tr><% }) %>
+</tbody></table></div>
+<div class="card"><h2>Role permissions</h2><table class="table compact"><thead><tr><th></th><th>Admin</th><th>Therapist</th><th>Receptionist</th><th>Accountant</th></tr></thead><tbody>
+<% [['Schedule & appointments','✓','✓','✓',''],['Patient demographics','✓','✓','✓',''],['Clinical (SOAP) notes','✓','✓','',''],['Invoices & payments','✓','','✓','✓'],['Void invoices','✓','','','✓'],['Reports & exports','✓','','','✓'],['Website content','✓','','✓',''],['Users, settings, audit log','✓','','','']].forEach(function(r){ %><tr><% r.forEach(function(c){ %><td><%= c %></td><% }) %></tr><% }) %>
+</tbody></table></div>

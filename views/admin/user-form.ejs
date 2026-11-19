@@ -1,0 +1,26 @@
+<div class="page-head"><div><p class="eyebrow"><a href="/admin/users">Staff users</a></p><h1><%= title %></h1></div></div>
+<% if (typeof secret !== 'undefined' && secret) { %><div class="alert alert-success"><strong><%= secret.label %>:</strong> <code class="secret"><%= secret.value %></code><br><small>Shown once. Give it to the user securely (in person or by phone). They must change it and set up 2FA on first sign-in.</small></div><% } %>
+<div class="grid2">
+<form method="post" action="<%= isNew ? '/admin/users/new' : '/admin/users/' + f.id %>" class="card form">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <label>Full name<input name="full_name" required maxlength="120" value="<%= f.full_name || '' %>"></label>
+  <label>Email (sign-in)<input type="email" name="email" maxlength="190" value="<%= f.email || '' %>" <%= isNew ? 'required' : 'readonly' %>></label>
+  <label>Phone<input type="tel" name="phone" maxlength="20" value="<%= f.phone || '' %>"></label>
+  <label>Role<select name="role"><% ROLES.forEach(function(r){ %><option <%= f.role === r ? 'selected' : '' %>><%= r %></option><% }) %></select></label>
+  <label>Linked therapist profile <small class="muted">(therapists see their own schedule)</small><select name="staff_id"><option value="">—</option><% staffProfiles.forEach(function(sp){ %><option value="<%= sp.id %>" <%= String(f.staff_id) === String(sp.id) ? 'selected' : '' %>><%= sp.full_name %></option><% }) %></select></label>
+  <% if (!isNew) { %><label class="check"><input type="checkbox" name="is_active" value="1" <%= f.is_active ? 'checked' : '' %>> Active (untick to revoke access immediately)</label><% } %>
+  <button class="btn btn-primary"><%= isNew ? 'Create user' : 'Save' %></button>
+</form>
+<% if (!isNew) { %>
+<section class="card"><h2>Security</h2>
+  <dl class="kv"><dt>2FA</dt><dd><%= f.totp_enabled ? 'Enabled' : 'Not set up' %></dd><dt>Last login</dt><dd><%= f.last_login_at || 'never' %></dd><dt>Locked until</dt><dd><%= f.locked_until || '—' %></dd><dt>Must change password</dt><dd><%= f.must_change_password ? 'yes' : 'no' %></dd></dl>
+  <div class="btn-row">
+    <form method="post" action="/admin/users/<%= f.id %>/reset-password" data-confirm="Generate a new temporary password? Current sessions will be signed out."><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-sm btn-ghost">Reset password</button></form>
+    <form method="post" action="/admin/users/<%= f.id %>/reset-2fa" data-confirm="Reset 2FA for this user?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-sm btn-ghost">Reset 2FA</button></form>
+    <% if (f.locked_until) { %><form method="post" action="/admin/users/<%= f.id %>/unlock"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-sm btn-ghost">Unlock</button></form><% } %>
+  </div>
+  <h3>Recent activity</h3>
+  <table class="table compact"><tbody><% (activity || []).forEach(function(a){ %><tr><td><small><%= a.at %></small></td><td><%= a.action %></td><td><small class="muted"><%= a.entity || '' %> <%= a.entity_id || '' %></small></td></tr><% }) %></tbody></table>
+</section>
+<% } %>
+</div>

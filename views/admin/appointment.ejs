@@ -1,0 +1,52 @@
+<div class="page-head"><div><p class="eyebrow">Appointment <%= a.ref %></p><h1><%= a.patient_name %></h1><p class="muted"><%= u.fmtDate(a.date) %> · <%= u.fmtTime(a.start_time) %>–<%= u.fmtTime(a.end_time) %> · <%= a.service_title %> · <%= a.staff_name || 'Unassigned' %></p></div>
+  <div class="actions"><span class="badge badge-<%= a.status %> big"><%= a.status.replace('_',' ') %></span></div></div>
+<div class="grid2">
+  <section class="card">
+    <h2>Patient</h2>
+    <dl class="kv"><dt>Patient ID</dt><dd><a href="/admin/patients/<%= a.patient_id %>"><%= a.patient_code %></a></dd><dt>Phone</dt><dd><a href="tel:<%= a.patient_phone %>"><%= a.patient_phone %></a></dd><dt>Email</dt><dd><%= a.patient_email || '—' %></dd><dt>Source</dt><dd><%= a.source %></dd><dt>Booked</dt><dd><%= a.created_at %></dd>
+      <% if (a.package_title) { %><dt>Care plan</dt><dd><%= a.package_title %></dd><% } %><% if (a.complaint) { %><dt>Complaint</dt><dd><%= a.complaint %></dd><% } %><% if (a.cancel_reason) { %><dt>Cancellation</dt><dd><%= a.cancel_reason %></dd><% } %></dl>
+    <% if (can('appointments.manage')) { %>
+    <h3>Change status</h3>
+    <div class="btn-row">
+      <% [['confirmed','Confirm'],['checked_in','Check in'],['completed','Complete'],['no_show','No-show']].forEach(function(x){ if (a.status === x[0]) return; %>
+        <form method="post" action="/admin/appointments/<%= a.id %>/status"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="status" value="<%= x[0] %>"><% if (x[0]==='confirmed') { %><input type="hidden" name="notify" value="1"><% } %><button class="btn btn-sm btn-ghost"><%= x[1] %></button></form>
+      <% }) %>
+    </div>
+    <% if (a.status !== 'cancelled') { %>
+    <form method="post" action="/admin/appointments/<%= a.id %>/status" class="form inline-form" data-confirm="Cancel this appointment?"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="status" value="cancelled">
+      <input name="reason" placeholder="Cancellation reason" maxlength="300"><label class="check"><input type="checkbox" name="notify" value="1" checked> notify patient</label><button class="btn btn-sm btn-danger">Cancel</button></form>
+    <% } %>
+    <% } %>
+  </section>
+  <section class="card">
+    <h2>Billing &amp; follow-up</h2>
+    <% if (invoice) { %><p>Invoice <a href="/admin/invoices/<%= invoice.id %>"><%= invoice.invoice_no %></a> · <%= u.money(invoice.total) %> · <span class="badge badge-<%= invoice.status %>"><%= invoice.status %></span></p>
+    <% } else if (can('invoices.manage')) { %><p><a class="btn btn-primary" href="/admin/invoices/new?appointment=<%= a.id %>">Create invoice</a></p><% } %>
+    <p><a class="btn btn-ghost" href="/admin/appointments/new?patient=<%= a.patient_id %>">Book follow-up</a> <% if (can('clinical.write')) { %><a class="btn btn-ghost" href="/admin/patients/<%= a.patient_id %>?tab=clinical&appointment=<%= a.id %>">Write clinical note</a><% } %></p>
+    <% if (can('appointments.manage')) { %>
+    <form method="post" action="/admin/appointments/<%= a.id %>/note" class="form"><input type="hidden" name="_csrf" value="<%= csrf %>"><label>Internal note (not visible to patient)<textarea name="internal_note" rows="2" maxlength="2000"><%= a.internal_note || '' %></textarea></label><button class="btn btn-sm btn-ghost">Save note</button></form>
+    <% } %>
+  </section>
+  <% if (can('appointments.manage') && !['cancelled','completed','no_show'].includes(a.status)) { %>
+  <section class="card">
+    <h2>Reschedule</h2>
+    <form method="post" action="/admin/appointments/<%= a.id %>/reschedule" class="form" data-booking data-admin data-ignore="<%= a.id %>">
+      <input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" data-service value="<%= a.service_id %>">
+      <div class="row2"><label>Therapist<select name="staff_id" data-staff><option value="">Any</option><% staffList.forEach(function(m){ %><option value="<%= m.id %>" <%= m.id === a.staff_id ? 'selected' : '' %>><%= m.full_name %></option><% }) %></select></label>
+      <label>Date<input type="date" name="date" required value="<%= a.date %>" data-date></label></div>
+      <input type="hidden" name="time" data-time>
+      <div class="slots" data-slots></div>
+      <% if (['admin','receptionist'].includes(user.role)) { %><details class="override"><summary>Override availability</summary><label class="check"><input type="checkbox" name="override" value="1" data-override> Allow any time</label><label>Time<input type="time" data-override-time step="300"></label></details><% } %>
+      <label class="check"><input type="checkbox" name="notify" value="1" checked> Notify patient</label>
+      <button class="btn btn-primary btn-sm" data-submit>Reschedule</button>
+    </form>
+  </section>
+  <% } %>
+  <section class="card">
+    <div class="card-head"><h2>Messages sent</h2><% if (can('appointments.manage') && ['pending','confirmed'].includes(a.status)) { %><form method="post" action="/admin/appointments/<%= a.id %>/remind"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-sm btn-ghost">Send reminder now</button></form><% } %></div>
+    <p class="small muted">Automatic: 24 h reminder <%= a.reminder_24h_sent ? '✓ done' : 'pending' %> · 2 h reminder <%= a.reminder_2h_sent ? '✓ done' : 'pending' %></p>
+    <% if (!notifs.length) { %><p class="muted">No messages yet.</p><% } else { %>
+    <table class="table compact"><tbody><% notifs.forEach(function(n){ %><tr><td><%= n.created_at %></td><td><%= n.channel %></td><td><%= n.kind.replace(/_/g,' ') %></td><td><span class="badge badge-n-<%= n.status %>"><%= n.status %></span><% if (n.error) { %><br><small class="muted"><%= n.error %></small><% } %></td></tr><% }) %></tbody></table><% } %>
+  </section>
+  <% if (notes.length) { %><section class="card span2"><h2>Clinical notes for this visit</h2><% notes.forEach(function(n){ %><p><strong><%= n.note_type.replace('_',' ') %></strong> by <%= n.author %> · <%= n.created_at %> <%= n.is_locked ? '🔒' : '(draft)' %></p><% }) %></section><% } %>
+</div>

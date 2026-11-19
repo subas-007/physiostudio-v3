@@ -1,0 +1,43 @@
+<div class="page-head"><div><h1>Good <%= new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening' %>, <%= user.full_name.split(' ')[0] %></h1><p class="muted"><%= u.fmtDate(u.todayStr()) %><% if (mine) { %> · showing your appointments<% } %></p></div>
+  <div class="actions"><a class="btn btn-ghost" href="/admin/patients/new">+ Patient</a><% if (can('invoices.manage')) { %><a class="btn btn-ghost" href="/admin/invoices/new">+ Invoice</a><% } %></div></div>
+<div class="kpis">
+  <div class="kpi"><span>Today's appointments</span><strong><%= stats.today %></strong></div>
+  <div class="kpi"><span>Awaiting confirmation</span><strong><%= stats.pending %></strong><% if (stats.pending) { %><a href="/admin/appointments?view=list&status=pending">Review →</a><% } %></div>
+  <div class="kpi"><span>Next 7 days</span><strong><%= stats.upcomingWeek %></strong></div>
+  <div class="kpi"><span>New patients this month</span><strong><%= stats.newPatients %></strong><small class="muted"><%= stats.totalPatients %> active total</small></div>
+  <% if (stats.collectedToday !== undefined) { %>
+  <div class="kpi"><span>Collected today</span><strong><%= u.money(stats.collectedToday) %></strong></div>
+  <div class="kpi"><span>Collected this month</span><strong><%= u.money(stats.collectedMonth) %></strong></div>
+  <div class="kpi warn"><span>Outstanding</span><strong><%= u.money(stats.outstanding) %></strong><a href="/admin/invoices?status=unpaid">View →</a></div>
+  <% } %>
+  <% if (stats.failedNotifications) { %><div class="kpi bad"><span>Failed reminders (7 days)</span><strong><%= stats.failedNotifications %></strong><a href="/admin/logs/notifications?status=failed">Check →</a></div><% } %>
+</div>
+<div class="grid2">
+  <section class="card span2">
+    <div class="card-head"><h2>Today's schedule</h2><a href="/admin/appointments">Open schedule →</a></div>
+    <% if (!todays.length) { %><p class="muted">No appointments today.</p><% } else { %>
+    <table class="table"><thead><tr><th>Time</th><th>Patient</th><th>Service</th><th>Therapist</th><th>Status</th><th></th></tr></thead><tbody>
+    <% todays.forEach(function(a){ %><tr class="<%= a.status === 'cancelled' ? 'dim' : '' %>">
+      <td><strong><%= u.fmtTime(a.start_time) %></strong></td>
+      <td><a href="/admin/patients/<%= a.patient_id %>"><%= a.patient_name %></a><br><small class="muted"><%= a.patient_code %> · <%= a.patient_phone %></small></td>
+      <td><%= a.service_title %></td><td><%= a.staff_name %></td>
+      <td><span class="badge badge-<%= a.status %>"><%= a.status.replace('_',' ') %></span></td>
+      <td class="row-actions">
+        <% if (can('appointments.manage') && ['pending','confirmed'].includes(a.status)) { %><form method="post" action="/admin/appointments/<%= a.id %>/status"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="status" value="checked_in"><input type="hidden" name="back" value="day"><button class="btn btn-sm btn-ghost">Check in</button></form><% } %>
+        <% if (can('appointments.manage') && a.status === 'checked_in') { %><form method="post" action="/admin/appointments/<%= a.id %>/status"><input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="status" value="completed"><input type="hidden" name="back" value="day"><button class="btn btn-sm btn-primary">Complete</button></form><% } %>
+        <a class="btn btn-sm btn-ghost" href="/admin/appointments/<%= a.id %>">Open</a>
+      </td></tr><% }) %>
+    </tbody></table><% } %>
+  </section>
+  <section class="card">
+    <h2>Appointments – last 14 days</h2>
+    <% const days = []; for (let i = 13; i >= 0; i--) { const d = u.addDays(u.todayStr(), -i); const r = trend.find(t => t.date === d); days.push({ d, n: r ? r.n : 0 }); } const max = Math.max(1, ...days.map(x => x.n)); %>
+    <svg class="spark" viewBox="0 0 280 90" role="img" aria-label="Appointments per day over the last 14 days">
+      <% days.forEach(function(x, i){ const h = Math.round(x.n / max * 70); %><rect x="<%= i*20+3 %>" y="<%= 80-h %>" width="14" height="<%= Math.max(h,1) %>" rx="3"><title><%= x.d %>: <%= x.n %></title></rect><% }) %>
+    </svg>
+  </section>
+  <section class="card">
+    <h2>Quick links</h2>
+    <ul class="quick"><li><a href="/admin/appointments/new">Book an appointment by phone / walk-in</a></li><li><a href="/admin/patients/new">Register a new patient</a></li><% if (can('cms.manage')) { %><li><a href="/admin/cms/content">Edit home page text &amp; images</a></li><% } %><% if (can('settings.manage')) { %><li><a href="/admin/holidays">Add a holiday or therapist leave</a></li><% } %></ul>
+  </section>
+</div>

@@ -1,0 +1,6 @@
+<div class="page-head"><h1>Message delivery log</h1><div class="actions"><% ['','sent','queued','failed','skipped'].forEach(function(st){ %><a class="btn btn-sm <%= status === st ? 'btn-primary' : 'btn-ghost' %>" href="?status=<%= st %>"><%= st || 'all' %></a><% }) %></div></div>
+<p class="small muted">"Skipped" means the channel isn't configured yet (see Settings). Failed messages are retried automatically up to 3 times.</p>
+<div class="card"><table class="table"><thead><tr><th>Time</th><th>Patient</th><th>Appt</th><th>Channel</th><th>Type</th><th>To</th><th>Status</th></tr></thead><tbody>
+<% if (!rows.length) { %><tr><td colspan="7" class="muted">Nothing yet.</td></tr><% } %>
+<% rows.forEach(function(n){ %><tr><td><small><%= n.created_at %></small></td><td><%= n.full_name || '' %></td><td><% if (n.appointment_id) { %><a href="/admin/appointments/<%= n.appointment_id %>"><%= n.ref %></a><% } %></td><td><%= n.channel %></td><td><%= n.kind.replace(/_/g,' ') %></td><td><small><%= n.recipient %></small></td><td><span class="badge badge-n-<%= n.status %>"><%= n.status %></span><% if (n.error) { %><br><small class="muted"><%= n.error %></small><% } %></td></tr><% }) %>
+</tbody></table><%- include('../partials/pager', { pg, query: { status } }) %></div>

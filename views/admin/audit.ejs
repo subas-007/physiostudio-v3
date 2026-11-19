@@ -1,0 +1,5 @@
+<div class="page-head"><div><h1>Audit log</h1><p class="muted">Append-only record of sign-ins, patient-record access and every change. Entries cannot be edited or deleted.</p></div></div>
+<form method="get" class="filters card"><label class="grow">Search<input type="search" name="q" value="<%= q %>" placeholder="action (e.g. patient.view, auth.login_failed), user, IP"></label><label>Since<input type="date" name="from" value="<%= from %>"></label><button class="btn btn-ghost">Filter</button></form>
+<div class="card"><table class="table compact"><thead><tr><th>Time</th><th>User</th><th>IP</th><th>Action</th><th>Entity</th><th>Detail</th></tr></thead><tbody>
+<% rows.forEach(function(a){ %><tr class="<%= /failed|locked|forbidden|csrf/.test(a.action) ? 'warn-row' : '' %>"><td><small><%= a.at %></small></td><td><small><%= a.user_label || 'anonymous' %></small></td><td><small><%= a.ip %></small></td><td><code><%= a.action %></code></td><td><small><%= a.entity || '' %> <%= a.entity_id || '' %></small></td><td><small class="muted"><%= a.detail || '' %></small></td></tr><% }) %>
+</tbody></table><%- include('../partials/pager', { pg, query: { q, from } }) %></div>

@@ -1,0 +1,27 @@
+<section class="band"><div class="wrap narrow">
+  <div class="panel">
+    <p class="hint">Appointment <%= a.ref %></p>
+    <h1><%= u.fmtDate(a.date) %> at <%= u.fmtTime(a.start_time) %></h1>
+    <p><span class="badge badge-<%= a.status %>"><%= a.status.replace('_',' ') %></span></p>
+    <dl class="kv"><dt>Patient</dt><dd><%= a.patient_name %></dd><dt>Service</dt><dd><%= a.service_title %></dd><dt>Therapist</dt><dd><%= a.staff_name %></dd><dt>Location</dt><dd><%= s.address %></dd></dl>
+    <% if (canChange) { %>
+      <h2>Reschedule</h2>
+      <form method="post" action="/appointment/manage/<%= a.ref %>/reschedule" class="form" data-booking>
+        <input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="t" value="<%= t %>">
+        <input type="hidden" data-service value="<%= a.service_id %>"><input type="hidden" data-staff value="">
+        <label>New date<input type="date" name="date" required min="<%= minDate %>" max="<%= maxDate %>" data-date></label>
+        <input type="hidden" name="time" data-time required>
+        <div class="slots" data-slots aria-live="polite"><p class="hint">Pick a date to see free times.</p></div>
+        <button class="btn btn-primary" data-submit>Move appointment</button>
+      </form>
+      <h2>Cancel</h2>
+      <form method="post" action="/appointment/manage/<%= a.ref %>/cancel" class="form" data-confirm="Cancel this appointment?">
+        <input type="hidden" name="_csrf" value="<%= csrf %>"><input type="hidden" name="t" value="<%= t %>">
+        <label>Reason <small class="muted">(optional)</small><input name="reason" maxlength="300"></label>
+        <button class="btn btn-danger">Cancel appointment</button>
+      </form>
+    <% } else if (['pending','confirmed'].includes(a.status)) { %>
+      <p class="alert alert-info">Online changes close <%= s.cancel_cutoff_hours %> hours before the appointment. Please call <a href="tel:<%= s.phone_primary %>"><%= s.phone_primary %></a>.</p>
+    <% } %>
+  </div>
+</div></section>

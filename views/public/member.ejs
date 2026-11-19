@@ -1,0 +1,12 @@
+<section class="band"><div class="wrap split">
+  <figure class="split-photo"><% if (m.photo) { %><img src="<%= m.photo %>" alt="<%= m.full_name %>" width="460" height="560"><% } %></figure>
+  <div>
+    <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/team">Our team</a></nav>
+    <h1><%= m.full_name %></h1>
+    <p class="lede"><%= m.designation %><% if (m.qualification) { %>, <%= m.qualification %><% } %></p>
+    <% if (m.nhpc_no) { %><p>NHPC registration no. <%= m.nhpc_no %></p><% } %>
+    <div class="prose"><%- bioHtml %></div>
+    <% if (hours.length) { %><h2 class="h3">At the studio</h2><ul class="hours"><% hours.forEach(function(h){ %><li><span><%= u.DAYS[h.weekday] %></span><span><%= u.fmtTime(h.start_time) %> to <%= u.fmtTime(h.end_time) %></span></li><% }) %></ul><% } %>
+    <% if (m.is_bookable) { %><a class="btn btn-primary btn-lg" href="/book?therapist=<%= m.id %>">Book with <%= m.full_name.split(' ')[0] %></a><% } %>
+  </div>
+</div></section>

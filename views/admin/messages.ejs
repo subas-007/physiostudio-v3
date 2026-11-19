@@ -1,0 +1,9 @@
+<div class="page-head"><h1>Messages</h1><p class="muted">Enquiries from the website contact form.</p></div>
+<% if (!rows.length) { %><div class="card"><p class="muted">No messages.</p></div><% } %>
+<% rows.forEach(function(m){ %><article class="card msg <%= m.is_read ? 'read' : 'unread' %>">
+  <header><strong><%= m.name %></strong> <span class="muted"><%= m.email %> <%= m.phone %> · <%= m.created_at %></span></header>
+  <% if (m.subject) { %><h3><%= m.subject %></h3><% } %><p class="pre"><%= m.body %></p>
+  <div class="btn-row"><% if (m.email) { %><a class="btn btn-sm btn-ghost" href="mailto:<%= m.email %>?subject=Re: <%= encodeURIComponent(m.subject || 'Your enquiry') %>">Reply by email</a><% } %><% if (m.phone) { %><a class="btn btn-sm btn-ghost" href="https://wa.me/<%= u.toE164(m.phone).replace('+','') %>" target="_blank" rel="noopener">WhatsApp</a><% } %>
+    <form method="post" action="/admin/cms/messages/<%= m.id %>/read"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-sm btn-ghost">Mark <%= m.is_read ? 'unread' : 'read' %></button></form>
+    <form method="post" action="/admin/cms/messages/<%= m.id %>/delete" data-confirm="Delete message?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-sm btn-danger-ghost">Delete</button></form></div>
+</article><% }) %>

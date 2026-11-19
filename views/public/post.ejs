@@ -1,0 +1,13 @@
+<article class="band"><div class="wrap article">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/blog">Blog</a><% if (post.category) { %> / <a href="/blog?category=<%= encodeURIComponent(post.category) %>"><%= post.category %></a><% } %></nav>
+  <h1><%= post.title %></h1>
+  <p class="article-meta"><%= u.fmtDate(post.published_at) %>, <%= minutes %> min read<% if (post.author) { %>, by <%= post.author %><% } %></p>
+  <% if (post.cover) { %><img class="detail-img" src="<%= post.cover %>" alt="" width="820" height="460"><% } %>
+  <div class="prose"><%- bodyHtml %></div>
+  <aside class="article-cta"><p>Struggling with pain like this?</p><a href="/book" class="btn btn-primary">Book an assessment</a></aside>
+</div></article>
+<% if (related.length) { %>
+<section class="band band-paper"><div class="wrap"><h2 class="band-title">Keep reading</h2><div class="post-grid">
+  <% related.forEach(function(p){ %><article class="post-card"><a href="/blog/<%= p.slug %>"><% if (p.cover) { %><img src="<%= p.cover %>" alt="" loading="lazy" width="480" height="300"><% } %><small><%= p.category || 'Article' %></small><h3><%= p.title %></h3></a></article><% }) %>
+</div></div></section>
+<% } %>

@@ -1,0 +1,6 @@
+<header class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Services</nav><h1>Treatments</h1><p class="lede">Every programme starts with a full assessment and a plan built around your goals.</p></div></header>
+<section class="band band-tight"><div class="wrap">
+  <ul class="service-index wide">
+    <% services.forEach(function(sv){ %><li><a href="/services/<%= sv.slug %>"><% if (sv.image) { %><img src="<%= sv.image %>" alt="" width="160" height="120" loading="lazy"><% } %><span><strong><%= sv.title %></strong><small><%= sv.summary %></small></span></a></li><% }) %>
+  </ul>
+</div></section>

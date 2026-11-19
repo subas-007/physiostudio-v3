@@ -1,0 +1,10 @@
+<section class="section auth"><div class="container auth-wrap">
+  <form method="post" action="/login/2fa" class="card form auth-card">
+    <p class="eyebrow">Two-factor verification</p><h1>Enter your code</h1>
+    <%- include('../partials/flash', { flashes: [] }) %>
+    <p class="muted">Open your authenticator app (Google Authenticator, Microsoft Authenticator, Authy…) and enter the 6-digit code for <%= s.clinic_name %>.</p>
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <label>Code<input name="code" inputmode="numeric" pattern="[0-9 ]{6,7}" autocomplete="one-time-code" required autofocus class="code-input"></label>
+    <button class="btn btn-primary btn-block">Verify</button>
+  </form>
+</div></section>

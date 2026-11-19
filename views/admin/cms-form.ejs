@@ -1,0 +1,22 @@
+<div class="page-head"><div><p class="eyebrow"><a href="/admin/cms/<%= ekey %>"><%= e.label %></a></p><h1><%= title %></h1></div>
+  <div class="actions"><% if (row.id && e.publicUrl && row.slug) { %><a class="btn btn-ghost" href="<%= e.publicUrl(row) %>" target="_blank">View on site ↗</a><% } %></div></div>
+<form method="post" action="/admin/cms/<%= ekey %>/<%= row.id || 'new' %>?_csrf=<%= csrf %>" enctype="multipart/form-data" class="card form">
+  <% e.fields.forEach(function(f){ const v = row[f.name]; %>
+    <% if (f.type === 'text') { %><label><%= f.label %><input name="<%= f.name %>" value="<%= v == null ? '' : v %>" <%= f.required ? 'required' : '' %> maxlength="<%= f.max || 500 %>"></label>
+    <% } else if (f.type === 'textarea') { %><label><%= f.label %><textarea name="<%= f.name %>" rows="4" <%= f.required ? 'required' : '' %>><%= v || '' %></textarea></label>
+    <% } else if (f.type === 'markdown') { %><label><%= f.label %> <small class="muted">**bold**, *italic*, ### heading, - list, [link](https://…)</small><textarea name="<%= f.name %>" rows="12" class="mono"><%= v || '' %></textarea></label>
+    <% } else if (f.type === 'number') { %><label><%= f.label %><input type="number" name="<%= f.name %>" value="<%= v == null ? '' : v %>" <%= f.min != null ? 'min=' + f.min : '' %> <%= f.max != null ? 'max=' + f.max : '' %> step="<%= f.step || 1 %>"></label>
+    <% } else if (f.type === 'checkbox') { %><label class="check"><input type="checkbox" name="<%= f.name %>" value="1" <%= v ? 'checked' : '' %>> <%= f.label %></label>
+    <% } else if (f.type === 'select') { %><label><%= f.label %><select name="<%= f.name %>"><% f.options.forEach(function(o){ %><option value="<%= o %>" <%= (v || '') === o ? 'selected' : '' %>><%= o || 'Not on the map' %></option><% }) %></select></label>
+    <% } else if (f.type === 'ref') { %><label><%= f.label %><select name="<%= f.name %>"><option value="">None</option><% (refs[f.name] || []).forEach(function(o){ %><option value="<%= o.id %>" <%= v === o.id ? 'selected' : '' %>><%= o.title %></option><% }) %></select></label>
+    <% } else if (f.type === 'youtube') { %><label><%= f.label %><input name="<%= f.name %>" value="<%= v ? 'https://youtu.be/' + v : '' %>" <%= f.required ? 'required' : '' %> placeholder="https://youtu.be/…"></label><% if (v) { %><img src="https://i.ytimg.com/vi/<%= v %>/mqdefault.jpg" alt="" height="90"><% } %>
+    <% } else if (f.type === 'image') { %><div class="img-field"><% if (v) { %><img src="<%= v %>" alt="" height="90"><label class="check"><input type="checkbox" name="<%= f.name %>_remove" value="1"> remove</label><% } %><label><%= f.label %><input type="file" name="<%= f.name %>_file" accept="image/jpeg,image/png,image/webp,image/gif"></label></div><% } %>
+  <% }) %>
+  <% if (e.hours) { %>
+  <fieldset><legend>Working hours (leave blank for days off)</legend>
+    <div class="hours-grid"><% DAYS.forEach(function(d, wd){ const h = hours.find(x => x.weekday === wd) || {}; %><span><%= d %></span><input type="time" name="h_<%= wd %>_start" value="<%= h.start_time || '' %>" aria-label="<%= d %> start"><input type="time" name="h_<%= wd %>_end" value="<%= h.end_time || '' %>" aria-label="<%= d %> end"><% }) %></div>
+  </fieldset>
+  <% } %>
+  <div class="btn-row"><button class="btn btn-primary">Save</button><a class="btn btn-ghost" href="/admin/cms/<%= ekey %>">Back</a></div>
+</form>
+<% if (row.id) { %><form method="post" action="/admin/cms/<%= ekey %>/<%= row.id %>/delete" data-confirm="Delete permanently?" class="danger-zone"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-sm btn-danger-ghost">Delete <%= e.singular %></button></form><% } %>

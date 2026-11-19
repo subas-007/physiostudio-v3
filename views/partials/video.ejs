@@ -1,0 +1,8 @@
+<article class="video">
+  <button type="button" class="video-frame" data-video="<%= v.youtube_id %>" data-title="<%= v.title %>" aria-label="Play video: <%= v.title %>">
+    <img src="https://i.ytimg.com/vi/<%= v.youtube_id %>/hqdefault.jpg" alt="" loading="lazy" width="480" height="360"><span class="play" aria-hidden="true"></span>
+  </button>
+  <h3><%= v.title %></h3>
+  <% if (v.level || v.area_title) { %><p class="video-meta"><%= [v.area_title, v.level].filter(Boolean).join(', ') %></p><% } %>
+  <% if (v.description) { %><p><%= v.description %></p><% } %>
+</article>

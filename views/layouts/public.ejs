@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title ? title + ' | ' + s.clinic_name : s.clinic_name + ', physiotherapy in Kathmandu' %></title>
+  <meta name="description" content="<%= metaDescription %>">
+  <meta name="theme-color" content="<%= s.brand_color || '#2e3236' %>">
+  <meta property="og:title" content="<%= title || s.clinic_name %>">
+  <meta property="og:description" content="<%= metaDescription %>">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="/static/fonts/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/site.css">
+  <link rel="stylesheet" href="/theme.css">
+  <script type="application/ld+json"><%- JSON.stringify({ '@context': 'https://schema.org', '@type': 'MedicalClinic', name: s.clinic_name, telephone: s.phone_primary, email: s.email, address: s.address, medicalSpecialty: 'Physiotherapy', openingHours: 'Su-Fr 07:00-19:00', url: baseUrl || undefined }).replace(/</g, '\\u003c') %></script>
+</head>
+<body>
+  <%- include('../partials/site-header') %>
+  <main id="main">
+    <% if (flashes && flashes.length) { %><div class="wrap flash-wrap"><%- include('../partials/flash', { error: null, errors: null }) %></div><% } %>
+    <%- body %>
+  </main>
+  <%- include('../partials/site-footer') %>
+  <dialog class="lightbox" data-lightbox><form method="dialog"><button class="lightbox-close" aria-label="Close">×</button></form><img alt="" data-lightbox-img><p data-lightbox-cap></p></dialog>
+  <script src="/static/js/site.js" defer></script>
+</body>
+</html>

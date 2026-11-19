@@ -1,0 +1,14 @@
+<section class="section auth"><div class="container auth-wrap">
+  <form method="post" action="/forgot" class="card form auth-card">
+    <h1>Reset password</h1>
+    <% if (typeof sent !== 'undefined' && sent) { %>
+      <p class="alert alert-success">If an account exists for that email, we've sent a reset link. It expires in 30 minutes.</p>
+    <% } else { %>
+      <p class="muted">Enter the email you use to sign in and we'll send you a reset link.</p>
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <label>Email<input type="email" name="email" required maxlength="190" autocomplete="email"></label>
+      <button class="btn btn-primary btn-block">Send reset link</button>
+    <% } %>
+    <p class="small"><a href="/login">Back to sign in</a></p>
+  </form>
+</div></section>

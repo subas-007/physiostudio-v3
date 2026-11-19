@@ -1,0 +1,24 @@
+<div class="portal-grid">
+<form method="post" action="/portal/profile" class="card form">
+  <h2>My details</h2>
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <p><strong><%= f.full_name %></strong> · <%= f.email %><br><small class="muted">To change your name or email, please contact reception.</small></p>
+  <div class="row2"><label>Mobile<input type="tel" name="phone" required value="<%= f.phone || '' %>"></label><label>WhatsApp<input type="tel" name="whatsapp" value="<%= f.whatsapp || '' %>"></label></div>
+  <div class="row2"><label>Date of birth<input type="date" name="date_of_birth" value="<%= f.date_of_birth || '' %>"></label>
+    <label>Gender<select name="gender"><option value="">Prefer not to say</option><% ['Female','Male','Other'].forEach(function(g){ %><option <%= f.gender === g ? 'selected' : '' %>><%= g %></option><% }) %></select></label></div>
+  <label>Address<input name="address" value="<%= f.address || '' %>"></label>
+  <div class="row2"><label>Emergency contact name<input name="emergency_contact_name" value="<%= f.emergency_contact_name || '' %>"></label><label>Emergency contact phone<input type="tel" name="emergency_contact_phone" value="<%= f.emergency_contact_phone || '' %>"></label></div>
+  <h3>Reminders</h3>
+  <label class="check"><input type="checkbox" name="notify_email" value="1" <%= f.notify_email ? 'checked' : '' %>> Email confirmations &amp; reminders</label>
+  <label class="check"><input type="checkbox" name="notify_whatsapp" value="1" <%= f.notify_whatsapp ? 'checked' : '' %>> WhatsApp confirmations &amp; reminders</label>
+  <button class="btn btn-primary">Save details</button>
+</form>
+<form method="post" action="/portal/password" class="card form">
+  <h2>Change password</h2>
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <label>Current password<input type="password" name="current" required autocomplete="current-password"></label>
+  <label>New password<input type="password" name="password" required minlength="10" autocomplete="new-password"></label>
+  <label>Confirm new password<input type="password" name="password2" required minlength="10" autocomplete="new-password"></label>
+  <button class="btn btn-ghost">Change password</button>
+</form>
+</div>

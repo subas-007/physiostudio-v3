@@ -1,0 +1,28 @@
+<header class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Contact</nav><h1>Visit or get in touch</h1><% if (clinicStatus) { %><p class="lede"><span class="status <%= clinicStatus.open ? 'is-open' : '' %>"><%= clinicStatus.text %></span></p><% } %></div></header>
+<section class="band band-tight"><div class="wrap contact">
+  <div>
+    <dl class="contact-list">
+      <div><dt>Address</dt><dd><%= s.address %></dd></div>
+      <div><dt>Phone</dt><dd><a href="tel:<%= s.phone_primary %>"><%= s.phone_primary %></a><% if (s.phone_secondary) { %>, <%= s.phone_secondary %><% } %></dd></div>
+      <div><dt>Email</dt><dd><a href="mailto:<%= s.email %>"><%= s.email %></a></dd></div>
+      <div><dt>Hours</dt><dd><%= s.hours_text %></dd></div>
+    </dl>
+    <iframe class="map" title="Map showing <%= s.clinic_name %>" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=<%= encodeURIComponent(s.map_query) %>&output=embed"></iframe>
+  </div>
+  <div class="stack">
+    <form method="post" action="/contact" class="panel form">
+      <h2>Send a message</h2>
+      <%- include('../partials/flash', { flashes: [] }) %>
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+      <label>Your name<input name="name" required maxlength="120" value="<%= f.name || '' %>" autocomplete="name"></label>
+      <div class="row2"><label>Email<input type="email" name="email" maxlength="190" value="<%= f.email || '' %>" autocomplete="email"></label>
+      <label>Phone<input type="tel" name="phone" maxlength="20" value="<%= f.phone || '' %>" autocomplete="tel"></label></div>
+      <label>Subject<input name="subject" maxlength="150" value="<%= f.subject || '' %>"></label>
+      <label>Message<textarea name="body" rows="5" required maxlength="3000"><%= f.body || '' %></textarea></label>
+      <p class="hint">Please keep detailed medical information for your appointment.</p>
+      <button class="btn btn-primary">Send message</button>
+    </form>
+    <%- include('../partials/callback') %>
+  </div>
+</div></section>

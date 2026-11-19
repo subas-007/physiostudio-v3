@@ -1,0 +1,13 @@
+<section class="section auth"><div class="container auth-wrap">
+  <form method="post" action="<%= staff ? '/staff/login' : '/login' %>" class="card form auth-card">
+    <p class="eyebrow"><%= staff ? 'Staff access' : 'Patient portal' %></p>
+    <h1>Sign in</h1>
+    <%- include('../partials/flash', { flashes: [] }) %>
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <label>Email<input type="email" name="email" required autocomplete="username" maxlength="190" value="<%= email %>" autofocus></label>
+    <label>Password<input type="password" name="password" required autocomplete="current-password" maxlength="200"></label>
+    <button class="btn btn-primary btn-block">Sign in</button>
+    <p class="small"><a href="/forgot">Forgot your password?</a></p>
+    <% if (!staff) { %><hr><p class="small">New patient? <a href="/register">Create an account</a> to manage appointments and view invoices.</p><% } %>
+  </form>
+</div></section>

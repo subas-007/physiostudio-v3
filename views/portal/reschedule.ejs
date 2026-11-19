@@ -1,0 +1,12 @@
+<section class="card narrow-card">
+  <h2>Reschedule <%= a.ref %></h2>
+  <p class="muted">Currently <%= u.fmtDate(a.date) %> at <%= u.fmtTime(a.start_time) %> with <%= a.staff_name %>.</p>
+  <form method="post" action="/portal/appointments/<%= a.id %>/reschedule" class="form" data-booking>
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <input type="hidden" data-service value="<%= a.service_id %>"><input type="hidden" data-staff value="">
+    <label>New date<input type="date" name="date" required min="<%= minDate %>" max="<%= maxDate %>" data-date></label>
+    <input type="hidden" name="time" data-time required>
+    <div class="slots" data-slots aria-live="polite"><p class="muted">Pick a date to see times.</p></div>
+    <button class="btn btn-primary" data-submit>Move appointment</button> <a href="/portal" class="btn btn-ghost">Back</a>
+  </form>
+</section>

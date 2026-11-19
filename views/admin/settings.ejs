@@ -1,0 +1,23 @@
+<div class="page-head"><h1>Settings</h1></div>
+<div class="card status-row">
+  <span>Email (SMTP): <strong class="<%= channels.smtp ? 'ok-text' : 'bad-text' %>"><%= channels.smtp ? 'configured' : 'not configured' %></strong></span>
+  <span>WhatsApp: <strong class="<%= channels.wa ? 'ok-text' : 'bad-text' %>"><%= channels.wa ? channels.wa : 'not configured' %></strong></span>
+  <small class="muted">Channel credentials live in the server's <code>.env</code> file, not in the database.</small>
+</div>
+<form method="post" action="/admin/settings" class="form">
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <% groups.forEach(function(g){ %><fieldset class="card"><legend><%= g[0] %></legend>
+    <% if (g[0].indexOf('Reminders') === 0) { %><p class="small muted">Placeholders: {name} {full_name} {date} {time} {therapist} {service} {ref} {clinic} {phone} {address} {link} {site}. Leave a message blank to use the default.</p><% } %>
+    <% g[1].forEach(function(it){ const key = it[0], label = it[1], type = it[2], def = it[3]; const v = s[key] != null && s[key] !== '' ? s[key] : (def || ''); %>
+      <% if (type === 'bool') { %><label class="check"><input type="checkbox" name="<%= key %>" value="1" <%= s[key] === '1' ? 'checked' : '' %>> <%= label %></label>
+      <% } else if (type === 'textarea') { %><label><%= label %><textarea name="<%= key %>" rows="3"><%= v %></textarea></label>
+      <% } else { %><label><%= label %><input name="<%= key %>" value="<%= v %>"></label><% } %>
+    <% }) %></fieldset><% }) %>
+  <div class="sticky-save"><button class="btn btn-primary">Save settings</button></div>
+</form>
+<div class="grid2">
+  <form method="post" action="/admin/settings/test-notification" class="card form"><h2>Send a test message</h2><input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="row2"><label>Channel<select name="channel"><option value="email">Email</option><option value="whatsapp">WhatsApp</option></select></label><label>To (email or mobile)<input name="to" required maxlength="190"></label></div>
+    <button class="btn btn-ghost">Send test</button></form>
+  <form method="post" action="/admin/settings/run-reminders" class="card form"><h2>Run reminders now</h2><input type="hidden" name="_csrf" value="<%= csrf %>"><p class="small muted">Reminders run automatically every 5 minutes. Use this to trigger a run immediately.</p><button class="btn btn-ghost">Run now</button></form>
+</div>

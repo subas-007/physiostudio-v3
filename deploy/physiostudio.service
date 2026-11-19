@@ -1,0 +1,24 @@
+# /etc/systemd/system/physiostudio.service
+[Unit]
+Description=Physio Studio web app
+After=network.target
+
+[Service]
+Type=simple
+User=physiostudio
+WorkingDirectory=/opt/physiostudio
+EnvironmentFile=/opt/physiostudio/.env
+ExecStart=/usr/bin/node src/server.js
+Restart=always
+RestartSec=5
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/physiostudio
+CapabilityBoundingSet=
+RestrictSUIDSGID=true
+
+[Install]
+WantedBy=multi-user.target

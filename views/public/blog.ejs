@@ -1,0 +1,11 @@
+<header class="page-head"><div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / Blog</nav><h1>Health blog</h1><p class="lede">Practical advice on pain, recovery and staying active, from our physiotherapists.</p></div></header>
+<section class="band band-tight"><div class="wrap">
+  <% if (categories.length > 1) { %><nav class="filter" aria-label="Categories"><a href="/blog" <%- !category ? 'aria-current="page"' : '' %>>All</a><% categories.forEach(function(k){ %><a href="/blog?category=<%= encodeURIComponent(k.category) %>" <%- category === k.category ? 'aria-current="page"' : '' %>><%= k.category %></a><% }) %></nav><% } %>
+  <% if (!posts.length) { %><p class="empty">No articles here yet.</p><% } %>
+  <div class="post-grid">
+    <% posts.forEach(function(p){ %><article class="post-card"><a href="/blog/<%= p.slug %>">
+      <% if (p.cover) { %><img src="<%= p.cover %>" alt="" loading="lazy" width="480" height="300"><% } %>
+      <small><%= p.category || 'Article' %>, <%= p.minutes %> min read</small>
+      <h2><%= p.title %></h2><p><%= p.excerpt %></p></a></article><% }) %>
+  </div>
+</div></section>

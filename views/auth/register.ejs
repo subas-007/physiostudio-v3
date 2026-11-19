@@ -1,0 +1,20 @@
+<section class="section auth"><div class="container auth-wrap">
+  <form method="post" action="/register" class="card form auth-card wide">
+    <p class="eyebrow">Patient portal</p><h1>Create your account</h1>
+    <p class="muted">Book and manage appointments, update your details and download invoices. Already visited us? Use the same name and mobile number and we'll link your existing record.</p>
+    <%- include('../partials/flash', { flashes: [] }) %>
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <label>Full name<input name="full_name" required maxlength="120" value="<%= f.full_name || '' %>" autocomplete="name"></label>
+    <div class="row2"><label>Email<input type="email" name="email" required maxlength="190" value="<%= f.email || '' %>" autocomplete="email"></label>
+      <label>Mobile number<input type="tel" name="phone" required maxlength="20" value="<%= f.phone || '' %>" autocomplete="tel"></label></div>
+    <div class="row2"><label>Date of birth<input type="date" name="date_of_birth" value="<%= f.date_of_birth || '' %>"></label>
+      <label>Gender<select name="gender"><option value="">Prefer not to say</option><% ['Female','Male','Other'].forEach(function(g){ %><option <%= f.gender === g ? 'selected' : '' %>><%= g %></option><% }) %></select></label></div>
+    <div class="row2"><label>Password<input type="password" name="password" required minlength="10" maxlength="128" autocomplete="new-password"></label>
+      <label>Confirm password<input type="password" name="password2" required minlength="10" maxlength="128" autocomplete="new-password"></label></div>
+    <p class="small muted">At least 10 characters with 3 of: lowercase, uppercase, number, symbol.</p>
+    <label class="check"><input type="checkbox" name="consent_treatment" value="1" required> I agree to the <a href="/privacy" target="_blank">privacy notice</a>.</label>
+    <label class="check"><input type="checkbox" name="consent_communication" value="1" checked> Send me appointment reminders by email and WhatsApp.</label>
+    <button class="btn btn-primary btn-block">Create account</button>
+    <p class="small">Already registered? <a href="/login">Sign in</a></p>
+  </form>
+</div></section>

@@ -1,0 +1,11 @@
+<form method="post" action="/callback" class="callback form">
+  <h2><%= c['callback.title'] %></h2>
+  <p><%= c['callback.text'] %></p>
+  <input type="hidden" name="_csrf" value="<%= csrf %>">
+  <div class="hp" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
+  <label>Your name<input name="name" required maxlength="120" autocomplete="name"></label>
+  <label>Mobile number<input type="tel" name="phone" required maxlength="20" autocomplete="tel" placeholder="98XXXXXXXX"></label>
+  <label>Best time to call<select name="when"><option value="">Any time</option><option>Morning (7–11 AM)</option><option>Midday (11 AM–3 PM)</option><option>Evening (3–7 PM)</option></select></label>
+  <label><span>What would you like to ask? <span class="optional">Optional</span></span><input name="topic" maxlength="300"></label>
+  <button class="btn btn-primary">Request a call back</button>
+</form>

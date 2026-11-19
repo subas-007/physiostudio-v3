@@ -1,0 +1,27 @@
+<div class="page-head"><h1>Reports</h1>
+<form method="get" class="inline-form"><label>From<input type="date" name="from" value="<%= r.from %>"></label><label>To<input type="date" name="to" value="<%= r.to %>"></label><button class="btn btn-ghost">Apply</button></form></div>
+<div class="kpis">
+  <div class="kpi"><span>Invoiced</span><strong><%= u.money(billed.total) %></strong><small class="muted"><%= billed.n %> invoices · discounts <%= u.money(billed.discount) %></small></div>
+  <div class="kpi"><span>Collected</span><strong><%= u.money(collected) %></strong></div>
+  <div class="kpi warn"><span>Outstanding (all time)</span><strong><%= u.money(outstanding) %></strong></div>
+  <% const total = appt.reduce((a,b)=>a+b.n,0); const ns = (appt.find(x=>x.status==='no_show')||{n:0}).n; const cx = (appt.find(x=>x.status==='cancelled')||{n:0}).n; %>
+  <div class="kpi"><span>Appointments</span><strong><%= total %></strong><small class="muted">No-show <%= total ? Math.round(ns/total*100) : 0 %>% · Cancelled <%= total ? Math.round(cx/total*100) : 0 %>%</small></div>
+</div>
+<div class="grid2">
+  <section class="card span2"><h2>Daily collections</h2>
+    <% const max = Math.max(1, ...daily.map(d=>d.v)); const w = Math.max(8, Math.floor(860 / Math.max(daily.length,1))); %>
+    <% if (!daily.length) { %><p class="muted">No payments in this period.</p><% } else { %>
+    <svg class="bars" viewBox="0 0 <%= daily.length * w %> 160" preserveAspectRatio="none" role="img" aria-label="Daily collections">
+      <% daily.forEach(function(d,i){ const h = Math.round(d.v/max*140); %><rect x="<%= i*w+2 %>" y="<%= 150-h %>" width="<%= w-4 %>" height="<%= Math.max(h,1) %>" rx="2"><title><%= d.d %>: <%= u.money(d.v) %></title></rect><% }) %>
+    </svg><% } %>
+  </section>
+  <section class="card"><h2>By payment method</h2><table class="table compact"><tbody><% byMethod.forEach(function(m){ %><tr><td><%= m.method %></td><td class="num"><%= m.n %></td><td class="num"><%= u.money(m.v) %></td></tr><% }) %></tbody></table><% if (!byMethod.length) { %><p class="muted">—</p><% } %></section>
+  <section class="card"><h2>By service</h2><table class="table compact"><tbody><% byService.forEach(function(m){ %><tr><td><%= m.label %></td><td class="num"><%= m.qty %></td><td class="num"><%= u.money(m.v) %></td></tr><% }) %></tbody></table><% if (!byService.length) { %><p class="muted">—</p><% } %></section>
+  <section class="card"><h2>By therapist</h2><table class="table compact"><thead><tr><th>Therapist</th><th class="num">Booked</th><th class="num">Completed</th><th class="num">No-show</th></tr></thead><tbody><% byTherapist.forEach(function(m){ %><tr><td><%= m.name %></td><td class="num"><%= m.n %></td><td class="num"><%= m.done %></td><td class="num"><%= m.noshow %></td></tr><% }) %></tbody></table></section>
+  <section class="card"><h2>Booking channels</h2><table class="table compact"><tbody><% sources.forEach(function(m){ %><tr><td><%= m.source %></td><td class="num"><%= m.n %></td></tr><% }) %></tbody></table></section>
+  <section class="card span2"><h2>Export (CSV for Excel)</h2><p class="btn-row">
+    <a class="btn btn-ghost" href="/admin/reports/export/invoices.csv?from=<%= r.from %>&to=<%= r.to %>">Invoices</a>
+    <a class="btn btn-ghost" href="/admin/reports/export/payments.csv?from=<%= r.from %>&to=<%= r.to %>">Payments</a>
+    <a class="btn btn-ghost" href="/admin/reports/export/appointments.csv?from=<%= r.from %>&to=<%= r.to %>">Appointments</a></p>
+    <p class="small muted">Exports are logged in the audit trail.</p></section>
+</div>
