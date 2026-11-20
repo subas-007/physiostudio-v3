@@ -24,9 +24,22 @@
   // Body map: hotspots and chips select an area panel
   const finder = $('[data-finder]');
   if (finder) {
+    // Zoom the body photo onto the tapped area: move its point to the centre of the frame, then scale.
+    const zoomTo = (id) => {
+      const figure = $('[data-figure]', finder);
+      if (!figure) return;
+      const hs = $(`.hotspot[data-area="${id}"]`, finder);
+      if (!hs) { figure.style.setProperty('--s', '1'); return; }
+      const cx = ((hs.offsetLeft + hs.offsetWidth / 2) / figure.offsetWidth) * 100;
+      const cy = ((hs.offsetTop + hs.offsetHeight / 2) / figure.offsetHeight) * 100;
+      figure.style.setProperty('--px', cx.toFixed(2));
+      figure.style.setProperty('--py', cy.toFixed(2));
+      figure.style.setProperty('--s', '2.2');
+    };
     const select = (id, focusPanel) => {
       $$('[data-area]', finder).forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.area === id)));
       $$('[data-panel]', finder).forEach((p) => { p.hidden = p.dataset.panel !== id; });
+      zoomTo(id);
       if (focusPanel && window.matchMedia('(max-width: 640px)').matches) {
         const p = $(`[data-panel="${id}"]`, finder);
         if (p) p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });

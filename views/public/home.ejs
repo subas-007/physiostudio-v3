@@ -39,7 +39,7 @@
 <section class="page-head"><div class="wrap"><h1><%= c['home.hero.title'] %></h1><p class="lede"><%= c['home.hero.subtitle'] %></p></div></section>
 <% } %>
 
-<section class="band band-sage">
+<section class="band band-sage stats-band">
   <dl class="wrap stat-grid">
     <% [1,2,3,4].forEach(function(i){ %>
     <div class="stat-card">
@@ -51,7 +51,7 @@
   </dl>
 </section>
 
-<section class="band">
+<section class="band treatments-band">
   <div class="wrap">
     <div class="band-head row">
       <div>
@@ -86,22 +86,13 @@
     </div>
     <div class="finder" data-finder>
       <div class="finder-body">
-        <div class="figure">
-          <svg viewBox="0 0 200 400" aria-hidden="true" focusable="false">
-            <g class="body-shape">
-              <circle cx="100" cy="40" r="23"/>
-              <path d="M70 80 Q100 70 130 80 L135 192 Q100 206 65 192 Z"/>
-              <path class="limb" d="M72 86 L54 160 L46 230"/>
-              <path class="limb" d="M128 86 L146 160 L154 230"/>
-              <path class="limb leg" d="M88 196 L84 290 L82 368"/>
-              <path class="limb leg" d="M112 196 L116 290 L118 368"/>
-              <path class="limb" d="M82 370 L68 382"/>
-              <path class="limb" d="M118 370 L132 382"/>
-            </g>
-          </svg>
+        <div class="figure-frame">
+        <div class="figure" data-figure>
+          <img class="body-photo" src="/static/img/body/standing-adult.jpg" alt="" width="600" height="900" loading="lazy">
           <% mapped.forEach(function(a, i){ %>
             <button type="button" class="hotspot hs-<%= a.map_key %>" data-area="<%= a.id %>" aria-pressed="<%= firstArea && a.id === firstArea.id ? 'true' : 'false' %>" aria-controls="area-<%= a.id %>"><span><%= a.title %></span></button>
           <% }) %>
+        </div>
         </div>
         <div class="finder-panels" aria-live="polite">
           <% areas.forEach(function(a){ %>
