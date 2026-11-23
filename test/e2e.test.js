@@ -53,7 +53,9 @@ function client() {
       const page = await req('GET', pageUrl);
       const _csrf = csrfFrom(page.text);
       assert.ok(_csrf, `csrf token on ${pageUrl}`);
-      return req('POST', postUrl || pageUrl, { _csrf, ...body });
+      const r = await req('POST', postUrl || pageUrl, { _csrf, ...body });
+      // A staff sign-in hands off to the staff cookie; follow that hop, as a browser would.
+      return r.location && r.location.startsWith('/admin/start-session') ? req('GET', r.location) : r;
     },
     csrfFrom,
   };
@@ -228,7 +230,7 @@ test('patient registers, links to existing record, sees only own data, can cance
   // other patient's invoice -> 404
   const other = db.prepare('SELECT id FROM invoices LIMIT 1').get();
   assert.equal((await c.get(`/portal/invoices/${other.id}`)).status, 404);
-  assert.equal((await c.get('/admin')).status, 403);
+  assert.equal((await c.get('/admin')).location, '/staff/login', 'patients are not signed in to the staff area');
   // cancel own appointment
   const a = db.prepare("SELECT id FROM appointments WHERE patient_id=? AND status='confirmed'").get(pat.id);
   const page = await c.get('/portal');

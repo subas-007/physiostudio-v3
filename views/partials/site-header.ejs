@@ -9,7 +9,7 @@
 <% } %>
 <header class="masthead">
   <div class="wrap masthead-inner">
-    <a href="/" class="brand"><img src="<%= s.logo %>" alt="<%= s.clinic_name %>" height="44"></a>
+    <a href="/" class="brand"><img src="<%= s.logo %>" alt="" width="84" height="84"><span class="brand-text"><strong><%= s.clinic_name %></strong><small><%= s.tagline %></small></span></a>
     <nav id="mainnav" class="nav" aria-label="Main">
       <% [['/about', 'About'], ['/services', 'Services'], ['/packages', 'Care plans'], ['/team', 'Our team'], ['/blog', 'Blog'], ['/contact', 'Contact']].forEach(function(l){ %>
         <a href="<%= l[0] %>" <%- path.indexOf(l[0]) === 0 ? 'aria-current="page"' : '' %>><%= l[1] %></a>

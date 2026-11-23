@@ -78,7 +78,11 @@ button { font: inherit; }
 .announce[hidden] { display: none; }
 .masthead { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.94); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
 .masthead-inner { display: flex; align-items: center; gap: 28px; min-height: 76px; }
-.brand img { height: 44px; width: auto; }
+.brand { display: flex; align-items: center; gap: 14px; text-decoration: none; color: var(--ink); }
+.brand img { height: 84px; width: auto; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+.brand-text strong { font-family: var(--display); font-size: 1.35rem; font-weight: 800; letter-spacing: -.01em; color: var(--ink); }
+.brand-text small { font-size: .9rem; color: var(--muted); }
 .nav { display: flex; align-items: center; gap: 2px; margin-right: auto; }
 .nav > a, .nav-account a { white-space: nowrap; color: var(--ink); text-decoration: none; padding: 8px 12px; border-radius: var(--r-sm); font-weight: 700; font-size: .98rem; }
 .nav > a:hover, .nav-account a:hover { background: var(--paper); }
@@ -576,6 +580,11 @@ hr { border: 0; border-top: 1.5px solid var(--line); margin: 6px 0; }
 @media (max-width: 600px) {
   .band.stats-band { padding: 16px 0; }
   .band.treatments-band { padding-top: 28px; }
+}
+@media (max-width: 600px) {
+  .brand img { height: 60px; }
+  .brand-text strong { font-size: 1.1rem; }
+  .brand-text small { display: none; }
 }
 
 /* ---------- Home: treatments as cards ---------- */

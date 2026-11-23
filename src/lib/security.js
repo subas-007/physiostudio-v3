@@ -113,10 +113,14 @@ function decrypt(blob) {
   d.setAuthTag(Buffer.from(tag, 'base64'));
   return Buffer.concat([d.update(Buffer.from(ct, 'base64')), d.final()]).toString('utf8');
 }
+/** The decrypted TOTP seed, or null when it cannot be read (for example after the encryption key changed). */
+function readTotpSecret(blob) {
+  try { return decrypt(blob); } catch { return null; }
+}
 
 module.exports = {
   hashPassword, verifyPassword, DUMMY_HASH, passwordProblems,
   randomToken, sha256, safeEqual,
   newTotpSecret, verifyTotp, totpUri, hotp,
-  encrypt, decrypt,
+  encrypt, decrypt, readTotpSecret,
 };

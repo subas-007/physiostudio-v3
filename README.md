@@ -37,7 +37,7 @@ A rebuild of **physiostudio.com.np** with the existing photos and content, plus:
 
 ## Security controls
 - Passwords: scrypt (N=2^15), 10+ characters with complexity rules, banned-word list; lockout after 5 failures (15 min), plus IP rate-limiting on login, 2FA, registration, reset, booking and contact.
-- **Mandatory TOTP 2FA for all staff** (Google/Microsoft Authenticator); secrets AES-256-GCM encrypted at rest. Forced password change on first login.
+- **Mandatory TOTP 2FA for all staff** (Google/Microsoft Authenticator); secrets AES-256-GCM encrypted at rest. Forced password change on first login. Keep `APP_ENCRYPTION_KEY` unchanged: if it changes, two-factor secrets can't be read. To recover one account, run `npm run reset-2fa -- email@domain` on the server; the account sets two-factor up again at its next sign-in.
 - Sessions: server-side SQLite store, `HttpOnly`, `SameSite=Lax`, `Secure` + `__Host-` prefix in production, regenerated on login, idle timeout (30 min staff / 60 min patients), all sessions killed on password reset/deactivation.
 - CSRF tokens on every state-changing request; strict CSP (no inline script or style, self-hosted fonts, YouTube only via youtube-nocookie on click), HSTS, `frame-ancestors 'none'`, nosniff, Referrer/Permissions-Policy.
 - All output HTML-escaped; admin Markdown sanitised (stored-XSS defence); uploads verified by magic bytes (SVG rejected), random file names, 5 MB cap.
