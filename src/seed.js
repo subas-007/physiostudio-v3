@@ -147,14 +147,14 @@ function seed({ withAdmin = true } = {}) {
 
     // ---------- Why us ----------
     const why = [
-      ['Experienced Therapists', 'Qualified physiotherapists with years of hands-on clinical practice.', '/uploads/whyus/33327a8914dfa5895df95a6718b34515.svg'],
-      ['Advanced Technology', 'Modern diagnostic and therapy equipment for precise assessment and tracking.', '/uploads/whyus/c13f6cd5e2fb215fcc87917da195c372.svg'],
-      ['Convenient & Accessible', 'Central Pani Pokhari location, open 7 AM – 7 PM, Sunday to Friday.', '/uploads/whyus/4d5c7bd6707925a2a0ef80d28d81e1e8.svg'],
-      ['Evidence-Based Treatment', 'Every plan follows current clinical research and best practice.', '/uploads/whyus/8aecc5ffc3a3df34cd3e5593cf6e626f.svg'],
-      ['Expert Consultations', 'One-to-one time with a physiotherapist who listens.', '/uploads/whyus/608d420299aca184c3f9bfbb9b85e2f9.svg'],
-      ['Nutrition Strategies', 'Practical guidance that supports healing and recovery.', '/uploads/whyus/1d2c9953d94d6964d53d93552bbded35.svg'],
-      ['Soothing, Clean Ambiance', 'A calm, spotless space designed for comfort.', '/uploads/whyus/3e2ab83ef58d6c18345d80902650955f.svg'],
-      ['Support & Motivation', 'We stay with you from the first session to full recovery.', '/uploads/whyus/5b196d9e6bd0649609e1bfb2259117dd.svg'],
+      ['Experienced Therapists', 'Qualified physiotherapists with years of hands-on clinical practice.', '/static/img/n-users.svg'],
+      ['Advanced Technology', 'Modern diagnostic and therapy equipment for precise assessment and tracking.', '/static/img/n-cog.svg'],
+      ['Convenient & Accessible', 'Central Pani Pokhari location, open 7 AM – 7 PM, Sunday to Friday.', '/static/img/n-cal.svg'],
+      ['Evidence-Based Treatment', 'Every plan follows current clinical research and best practice.', '/static/img/n-chart.svg'],
+      ['Expert Consultations', 'One-to-one time with a physiotherapist who listens.', '/static/img/n-shield.svg'],
+      ['Nutrition Strategies', 'Practical guidance that supports healing and recovery.', '/static/img/n-sun.svg'],
+      ['Soothing, Clean Ambiance', 'A calm, spotless space designed for comfort.', '/static/img/n-globe.svg'],
+      ['Support & Motivation', 'We stay with you from the first session to full recovery.', '/static/img/n-bell.svg'],
     ];
     const insWhy = db.prepare('INSERT INTO why_us(title,body,icon,sort_order) VALUES (?,?,?,?)');
     why.forEach((w, i) => insWhy.run(...w, i));
