@@ -13,6 +13,7 @@
     "dev": "node --watch src/server.js",
     "seed": "node src/seed.js",
     "create-admin": "node scripts/create-admin.js",
+    "reset-2fa": "node scripts/reset-2fa.js",
     "test": "node --test --test-force-exit test/*.test.js"
   },
   "dependencies": {

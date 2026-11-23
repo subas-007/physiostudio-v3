@@ -1,10 +1,16 @@
 'use strict';
 const express = require('express');
 const { db } = require('../../db');
-const { requireStaff, requirePerm, can } = require('../../lib/middleware');
+const { audit, requireStaff, requirePerm, can } = require('../../lib/middleware');
 const { todayStr } = require('../../lib/util');
+const { COOKIE } = require('../../lib/sessions');
 
 const router = express.Router();
+// Sign out of the staff area only. Declared before the staff guard so signing out is never redirected.
+router.post('/logout', (req, res) => {
+  if (req.user) audit(req, 'auth.logout', 'user', req.user.id);
+  req.session.destroy(() => { res.clearCookie(COOKIE.staff); res.redirect('/'); });
+});
 router.use(requireStaff);
 router.use((req, res, next) => {
   res.locals.layout = 'layouts/admin';

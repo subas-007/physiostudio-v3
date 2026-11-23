@@ -30,6 +30,14 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TEXT NOT NULL DEFAULT (datetime('now','localtime'))
 );
 
+CREATE TABLE IF NOT EXISTS login_tickets (
+  token_hash TEXT PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  return_to TEXT,
+  patient_sid TEXT,
+  expires_at INTEGER NOT NULL,
+  used INTEGER NOT NULL DEFAULT 0
+);
 CREATE TABLE IF NOT EXISTS password_resets (
   id INTEGER PRIMARY KEY,
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -385,6 +393,7 @@ CREATE TABLE IF NOT EXISTS slides (
 function ensureColumn(table, column, ddl) {
   if (!db.prepare(`PRAGMA table_info(${table})`).all().some((c) => c.name === column)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${ddl}`);
 }
+ensureColumn('login_tickets', 'patient_sid', 'TEXT');
 ensureColumn('body_areas', 'blurb', 'TEXT');
 ensureColumn('body_areas', 'service_id', 'INTEGER REFERENCES services(id) ON DELETE SET NULL');
 ensureColumn('body_areas', 'map_key', 'TEXT');

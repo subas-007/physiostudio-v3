@@ -14,6 +14,7 @@ const layouts = require('express-ejs-layouts');
 const { db, allSettings, contentMap } = require('./db');
 const { loadUser, flash, csrf } = require('./lib/middleware');
 const util = require('./lib/util');
+const { COOKIE } = require('./lib/sessions');
 const { UPLOAD_ROOT } = require('./lib/upload');
 
 const PROD = process.env.NODE_ENV === 'production';
@@ -68,15 +69,20 @@ app.get('/robots.txt', (req, res) => res.type('text').send(`User-agent: *\nDisal
 app.use(express.urlencoded({ extended: false, limit: '200kb', parameterLimit: 300 }));
 app.use(express.json({ limit: '100kb' }));
 
-app.use(session({
-  store: new SqliteStore({ client: db, expired: { clear: true, intervalMs: 15 * 60 * 1000 } }),
-  name: PROD ? '__Host-ps.sid' : 'ps.sid',
+const sessionStore = new SqliteStore({ client: db, expired: { clear: true, intervalMs: 15 * 60 * 1000 } });
+const sessionOptions = (name) => ({
+  store: sessionStore,
+  name,
   secret: process.env.SESSION_SECRET || 'dev-insecure-secret-change-me-please-123456',
   resave: false,
   saveUninitialized: false,
   rolling: true,
   cookie: { httpOnly: true, sameSite: 'lax', secure: PROD, maxAge: 8 * 3600 * 1000, path: '/' },
-}));
+});
+// Staff pages (/admin) read the staff cookie; the public site and /portal read the patient cookie.
+const staffSession = session(sessionOptions(COOKIE.staff));
+const patientSession = session(sessionOptions(COOKIE.patient));
+app.use((req, res, next) => (req.path.startsWith('/admin') ? staffSession : patientSession)(req, res, next));
 // Make sure anonymous visitors get a session only when they hit a form (CSRF needs one).
 app.use(flash);
 app.use(loadUser);
@@ -127,6 +133,7 @@ if (require.main === module) {
     require('./seed').seed();
   }
   require('./seed').ensureDefaults();
+  if (!process.env.APP_ENCRYPTION_KEY) console.warn('[security] APP_ENCRYPTION_KEY is not set: two-factor secrets use SESSION_SECRET as their key. Set APP_ENCRYPTION_KEY and keep it unchanged, or two-factor breaks.');
   app.listen(PORT, process.env.HOST || '127.0.0.1', () => console.log(`Physio Studio running on http://${process.env.HOST || '127.0.0.1'}:${PORT}`));
   if (process.env.DISABLE_SCHEDULER !== '1') require('./lib/scheduler').start();
 }

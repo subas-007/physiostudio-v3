@@ -6,6 +6,7 @@ const sec = require('../lib/security');
 const { audit, STAFF_ROLES } = require('../lib/middleware');
 const { clean, isEmail, isPhone, isDate } = require('../lib/util');
 const { createPatient } = require('../lib/booking');
+const { COOKIE } = require('../lib/sessions');
 const { sendStaffEmail } = require('../lib/notify');
 
 const router = express.Router();
@@ -27,6 +28,7 @@ function safeReturn(url, fallback) {
 function homeFor(user) { return STAFF_ROLES.includes(user.role) ? '/admin' : '/portal'; }
 
 function completeLogin(req, res, user, msg) {
+  if (STAFF_ROLES.includes(user.role)) return handOffToStaff(req, res, user);
   const returnTo = req.session.returnTo;
   req.session.regenerate((err) => {
     if (err) throw err;
@@ -37,15 +39,58 @@ function completeLogin(req, res, user, msg) {
     db.prepare("UPDATE users SET failed_logins=0, locked_until=NULL, last_login_at=datetime('now','localtime') WHERE id=?").run(user.id);
     req.user = user;
     audit(req, 'auth.login_success', 'user', user.id);
-    const needs2fa = STAFF_ROLES.includes(user.role) && !user.totp_enabled && getSetting('require_staff_2fa', '1') === '1';
-    req.session.save(() => res.redirect(needs2fa ? '/admin/account/2fa?required=1' : safeReturn(returnTo, homeFor(user))));
+    req.session.save(() => res.redirect(safeReturn(returnTo, '/portal')));
   });
 }
+
+// Staff sign in on the public site, but their session lives in the staff cookie, which this request cannot set.
+// So the patient cookie issues a one-time link (60 s, single use) and /admin/start-session redeems it.
+function handOffToStaff(req, res, user) {
+  const token = sec.randomToken(32);
+  const returnTo = safeReturn(req.session.returnTo, null);
+  db.prepare("UPDATE users SET failed_logins=0, locked_until=NULL, last_login_at=datetime('now','localtime') WHERE id=?").run(user.id);
+  db.prepare('INSERT INTO login_tickets(token_hash, user_id, return_to, patient_sid, expires_at) VALUES (?,?,?,?,?)')
+    .run(sec.sha256(token), user.id, returnTo && returnTo.startsWith('/admin') ? returnTo : null, req.sessionID, Date.now() + 60 * 1000);
+  delete req.session.pendingUserId;
+  delete req.session.pendingAt;
+  delete req.session.returnTo;
+  req.session.save(() => res.redirect(`/admin/start-session?t=${token}`));
+}
+
+// The patient cookie's session id identifies the browser that started the sign-in.
+function signInBrowser(req) {
+  const m = new RegExp(`(?:^|;\\s*)${COOKIE.patient}=([^;]+)`).exec(req.headers.cookie || '');
+  const value = m ? decodeURIComponent(m[1]) : '';
+  return value.startsWith('s:') ? value.slice(2).split('.')[0] : null;
+}
+
+router.get('/admin/start-session', (req, res) => {
+  const hash = sec.sha256(clean(req.query.t, 100));
+  const sid = signInBrowser(req);
+  const ticket = sid && db.prepare('SELECT user_id, return_to FROM login_tickets WHERE token_hash = ? AND used = 0 AND expires_at > ? AND patient_sid = ?').get(hash, Date.now(), sid);
+  if (!ticket || db.prepare('UPDATE login_tickets SET used = 1 WHERE token_hash = ?').run(hash).changes !== 1) {
+    return res.redirect('/staff/login?expired=1');
+  }
+  const user = db.prepare('SELECT * FROM users WHERE id = ? AND is_active = 1').get(ticket.user_id);
+  if (!user || !STAFF_ROLES.includes(user.role)) return res.redirect('/staff/login?expired=1');
+  req.session.regenerate((err) => {
+    if (err) throw err;
+    req.session.userId = user.id;
+    req.session.mfaPassed = true;
+    req.session.lastSeen = Date.now();
+    req.user = user;
+    audit(req, 'auth.login_success', 'user', user.id);
+    const needs2fa = !user.totp_enabled && getSetting('require_staff_2fa', '1') === '1';
+    const next = safeReturn(ticket.return_to, '/admin');
+    req.session.save(() => res.redirect(needs2fa ? '/admin/account/2fa?required=1' : (next.startsWith('/admin') ? next : '/admin')));
+  });
+});
 
 // ---------- Login ----------
 router.get(['/login', '/staff/login'], (req, res) => {
   if (req.user) return res.redirect(homeFor(req.user));
-  res.render('auth/login', { title: 'Sign in', staff: req.path.startsWith('/staff'), email: '' });
+  const error = req.query.expired ? 'That sign-in link has expired. Please sign in again.' : undefined;
+  res.render('auth/login', { title: 'Sign in', staff: req.path.startsWith('/staff'), email: '', error });
 });
 
 router.post(['/login', '/staff/login'], loginLimiter, (req, res) => {
@@ -55,7 +100,7 @@ router.post(['/login', '/staff/login'], loginLimiter, (req, res) => {
   const fail = (msg = 'Incorrect email or password.') => res.status(401).render('auth/login', { title: 'Sign in', staff, email, error: msg });
 
   const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
-  if (!user) { sec.verifyPassword(password, sec.DUMMY_HASH); audit(req, 'auth.login_failed', null, null, { email }); return fail(); }
+  if (!user) { sec.verifyPassword(password, sec.DUMMY_HASH); audit(req, 'auth.login_failed', null, null, { email, area: staff ? 'staff' : 'public' }); return fail(); }
   // Compare inside SQLite: locked_until is written with SQLite's localtime, so JS Date parsing can disagree with it.
   const locked = user.locked_until && db.prepare("SELECT ? > datetime('now','localtime') AS locked").get(user.locked_until).locked === 1;
   if (locked) {
@@ -68,7 +113,7 @@ router.post(['/login', '/staff/login'], loginLimiter, (req, res) => {
       db.prepare(`UPDATE users SET failed_logins=0, locked_until=datetime('now','localtime','+${LOCK_MIN} minutes') WHERE id=?`).run(user.id);
       audit(req, 'auth.account_locked', 'user', user.id);
     } else db.prepare('UPDATE users SET failed_logins=? WHERE id=?').run(n, user.id);
-    audit(req, 'auth.login_failed', 'user', user.id);
+    audit(req, 'auth.login_failed', 'user', user.id, { area: staff ? 'staff' : 'public' });
     return fail();
   }
   if (user.totp_enabled) {
@@ -92,7 +137,11 @@ router.post('/login/2fa', mfaLimiter, (req, res) => {
   const id = req.session.pendingUserId;
   if (!id || Date.now() - (req.session.pendingAt || 0) > 5 * 60 * 1000) { req.flash('error', 'Verification timed out. Please sign in again.'); return res.redirect('/login'); }
   const user = db.prepare('SELECT * FROM users WHERE id = ?').get(id);
-  const secret = user && sec.decrypt(user.totp_secret);
+  const secret = user && sec.readTotpSecret(user.totp_secret);
+  if (user && !secret) {
+    audit(req, 'auth.2fa_unreadable', 'user', id);
+    return res.status(503).render('auth/2fa', { title: 'Two-factor verification', error: 'Two-factor cannot be checked for this account. Ask an administrator to reset two-factor.' });
+  }
   if (!secret || !sec.verifyTotp(secret, clean(req.body.code, 10).replace(/\s/g, ''))) {
     req.user = user; audit(req, 'auth.mfa_failed', 'user', id); req.user = null;
     return res.status(401).render('auth/2fa', { title: 'Two-factor verification', error: 'That code is not valid. Check your authenticator app and try again.' });
@@ -102,7 +151,7 @@ router.post('/login/2fa', mfaLimiter, (req, res) => {
 
 router.post('/logout', (req, res) => {
   if (req.user) audit(req, 'auth.logout', 'user', req.user.id);
-  req.session.destroy(() => { res.clearCookie(process.env.NODE_ENV === 'production' ? '__Host-ps.sid' : 'ps.sid'); res.redirect('/'); });
+  req.session.destroy(() => { res.clearCookie(COOKIE.patient); res.redirect('/'); });
 });
 
 // ---------- Patient self-registration ----------
