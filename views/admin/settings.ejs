@@ -4,6 +4,13 @@
   <span>WhatsApp: <strong class="<%= channels.wa ? 'ok-text' : 'bad-text' %>"><%= channels.wa ? channels.wa : 'not configured' %></strong></span>
   <small class="muted">Channel credentials live in the server's <code>.env</code> file, not in the database.</small>
 </div>
+<form method="post" action="/admin/settings/logo?_csrf=<%= csrf %>" enctype="multipart/form-data" class="card form">
+  <fieldset><legend>Logo</legend>
+    <% if (s.logo) { %><p class="logo-current"><img src="<%= s.logo %>" alt="Current logo" height="64"></p><% } %>
+    <label>Upload a new logo (JPG, PNG, WEBP or GIF, up to 5 MB)<input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/gif" required></label>
+    <button class="btn btn-primary">Save logo</button>
+  </fieldset>
+</form>
 <form method="post" action="/admin/settings" class="form">
   <input type="hidden" name="_csrf" value="<%= csrf %>">
   <% groups.forEach(function(g){ %><fieldset class="card"><legend><%= g[0] %></legend>

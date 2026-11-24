@@ -1,6 +1,6 @@
 {
   "name": "physiostudio",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "Physio Studio – clinic website, patient portal, appointments, invoicing, CMS and reminders",
   "main": "src/server.js",

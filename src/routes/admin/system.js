@@ -8,6 +8,7 @@ const { clean, isEmail, isDate, paginate } = require('../../lib/util');
 const sec = require('../../lib/security');
 const notify = require('../../lib/notify');
 const { runReminders } = require('../../lib/scheduler');
+const { memory, saveImage } = require('../../lib/upload');
 
 const router = express.Router();
 const ROLES = ['admin', 'therapist', 'receptionist', 'accountant'];
@@ -90,7 +91,7 @@ const SETTING_GROUPS = [
     ['clinic_name', 'Clinic name'], ['tagline', 'Tagline'], ['phone_primary', 'Primary phone'], ['phone_secondary', 'Secondary phone'],
     ['whatsapp_number', 'WhatsApp number (click-to-chat button)'], ['email', 'Public email'], ['address', 'Address'], ['hours_text', 'Opening hours text'],
     ['map_query', 'Google Maps search text'], ['facebook_url', 'Facebook URL'], ['instagram_url', 'Instagram URL'], ['tiktok_url', 'TikTok URL'],
-    ['logo', 'Logo path (/uploads/...)'], ['brand_color', 'Brand colour (#hex)'], ['accent_color', 'Accent colour (#hex)'], ['meta_description', 'SEO description', 'textarea'],
+    ['brand_color', 'Brand colour (#hex)'], ['accent_color', 'Accent colour (#hex)'], ['meta_description', 'SEO description', 'textarea'],
   ]],
   ['Announcement bar', [
     ['announcement_enabled', 'Show the announcement bar at the top of every page', 'bool'], ['announcement_text', 'Announcement text'],
@@ -121,7 +122,6 @@ router.post('/settings', requirePerm('settings.manage'), (req, res) => {
     if (['brand_color', 'accent_color'].includes(key) && !/^#[0-9a-fA-F]{6}$/.test(v)) continue;
     if (['slot_step_min', 'booking_lead_min', 'booking_horizon_days', 'cancel_cutoff_hours', 'tax_rate'].includes(key) && !/^\d+(\.\d+)?$/.test(v)) continue;
     if (key === 'fy_start_mmdd' && !/^\d{2}-\d{2}$/.test(v)) continue;
-    if (key === 'logo' && v && !/^\/uploads\//.test(v)) continue;
     if (/_url$/.test(key) && v && !/^https:\/\//.test(v)) continue;
     if (key === 'announcement_link' && v && !/^\/(?!\/)|^https:\/\//.test(v)) continue;
     if (key === 'announcement_until' && v && !isDate(v)) continue;
@@ -130,6 +130,17 @@ router.post('/settings', requirePerm('settings.manage'), (req, res) => {
   }
   audit(req, 'settings.update', 'settings', null, { changed });
   req.flash('success', changed.length ? 'Settings saved.' : 'No changes.');
+  res.redirect('/admin/settings');
+});
+// The logo is an uploaded image (same checks as the media library), not a typed path.
+router.post('/settings/logo', requirePerm('settings.manage'), memory.single('logo'), (req, res) => {
+  try {
+    const p = saveImage(req.file, req.user.id, 'Clinic logo');
+    if (!p) throw Object.assign(new Error('Choose an image.'), { userMessage: 'Choose an image.' });
+    setSetting('logo', p);
+    audit(req, 'settings.logo_update', 'settings', null, { path: p });
+    req.flash('success', 'Logo updated.');
+  } catch (e) { if (!e.userMessage) throw e; req.flash('error', e.userMessage); }
   res.redirect('/admin/settings');
 });
 router.post('/settings/test-notification', requirePerm('settings.manage'), async (req, res) => {
