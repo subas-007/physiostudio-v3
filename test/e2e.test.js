@@ -290,6 +290,28 @@ test('CMS: upload validation rejects non-images, content edits appear on site', 
   assert.match((await fetch(base + '/').then((x) => x.text())), /Move Better, Live Better/);
 });
 
+test('admin can change the logo from the settings page; non-images are refused', async () => {
+  const c = adminClient;
+  const page = await c.get('/admin/settings');
+  assert.match(page.text, /action="\/admin\/settings\/logo\?_csrf=/, 'logo upload form is on the settings page');
+  const csrf = c.csrfFrom(page.text);
+  const before = db.prepare("SELECT value FROM settings WHERE key='logo'").get().value;
+
+  const bad = new FormData();
+  bad.append('logo', new Blob(['<svg onload=alert(1)>'], { type: 'image/svg+xml' }), 'x.svg');
+  let r = await c.raw('POST', `/admin/settings/logo?_csrf=${csrf}`, null, { multipart: bad });
+  assert.match((await c.get(r.location)).text, /Only JPG, PNG, WEBP or GIF/);
+  assert.equal(db.prepare("SELECT value FROM settings WHERE key='logo'").get().value, before, 'a refused file leaves the logo unchanged');
+
+  const good = new FormData();
+  good.append('logo', new Blob([Buffer.from('89504e470d0a1a0a0000000d49484452', 'hex'), 'logo-bytes'], { type: 'image/png' }), 'logo.png');
+  r = await c.raw('POST', `/admin/settings/logo?_csrf=${csrf}`, null, { multipart: good });
+  assert.equal(r.status, 302);
+  const logo = db.prepare("SELECT value FROM settings WHERE key='logo'").get().value;
+  assert.match(logo, /^\/uploads\/cms\/[\w.-]+\.png$/, 'the logo points at the uploaded file');
+  assert.ok((await fetch(base + '/').then((x) => x.text())).includes(logo), 'the public header shows the new logo');
+});
+
 test('v2: new public pages, body map, live status and next slot render', async () => {
   for (const p of ['/', '/packages', '/exercises', '/blog?category=Wellness', '/about', '/faq', '/contact', '/team', '/testimonials']) {
     const r = await fetch(base + p);
